@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>調べものレッスン | ChatGPT はじめてガイド</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pink: #ff6b9d; --orange: #ff9f43; --yellow: #feca57; --green: #1dd1a1; --blue: #54a0ff; --purple: #a55eea; --dark: #2d3436; --gray: #636e72; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'M PLUS Rounded 1c', sans-serif; background: linear-gradient(180deg, #f0f9ff 0%, #f0fff4 100%); color: var(--dark); line-height: 1.8; font-size: 17px; }
+    .header { background: linear-gradient(135deg, var(--blue), var(--green)); padding: 40px 20px; text-align: center; color: white; }
+    .header-icon { font-size: 60px; margin-bottom: 12px; }
+    .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .header p { opacity: 0.95; }
+    .back-link { display: inline-block; margin-top: 16px; color: white; text-decoration: none; font-size: 14px; opacity: 0.9; }
+    .main { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+    .intro { background: white; border-radius: 20px; padding: 28px; margin-bottom: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .intro h2 { font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .intro ul { list-style: none; margin-top: 16px; }
+    .intro li { padding: 8px 0; padding-left: 28px; position: relative; color: var(--gray); }
+    .intro li::before { content: '✅'; position: absolute; left: 0; }
+    .lesson { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 24px; padding: 28px; margin-bottom: 24px; color: white; }
+    .lesson-num { background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 14px; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .lesson h3 { font-size: 20px; margin-bottom: 16px; }
+    .lesson > p { font-size: 15px; opacity: 0.95; margin-bottom: 20px; }
+    .copy-area { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+    .copy-text { font-size: 15px; line-height: 1.9; color: var(--dark); white-space: pre-line; }
+    .copy-btn { display: block; width: 100%; padding: 16px; background: var(--green); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.3s; }
+    .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(29, 209, 161, 0.4); }
+    .copy-btn.copied { background: var(--purple); }
+    .tip { background: #e0ffe5; border-radius: 16px; padding: 20px; margin-top: 16px; border-left: 4px solid var(--green); }
+    .tip h4 { color: #155724; font-size: 15px; margin-bottom: 6px; }
+    .tip p { color: #1e7e34; font-size: 14px; }
+    .next-section { text-align: center; margin-top: 40px; padding: 40px 20px; background: white; border-radius: 24px; }
+    .next-section h3 { font-size: 20px; margin-bottom: 16px; }
+    .other-categories { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 24px 0; }
+    .cat-link { background: #f8f9fa; padding: 10px 16px; border-radius: 50px; text-decoration: none; color: var(--dark); font-size: 14px; font-weight: 600; transition: all 0.3s; border: 2px solid #e9ecef; }
+    .cat-link:hover { background: var(--blue); color: white; border-color: var(--blue); transform: translateY(-2px); }
+    .back-btn { display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, var(--blue), var(--green)); color: white; border-radius: 50px; text-decoration: none; font-weight: 700; transition: all 0.3s; }
+    .back-btn:hover { transform: translateY(-2px); }
+    .chatgpt-float { position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, #10a37f, #1a7f64); color: white; padding: 14px 24px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 30px rgba(16, 163, 127, 0.4); transition: all 0.3s; z-index: 1000; }
+    .chatgpt-float:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(16, 163, 127, 0.5); }
+    .chatgpt-icon { font-size: 20px; }
+    @media (max-width: 500px) { .chatgpt-float { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 14px; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-icon">🔍</div>
+    <h1>調べものレッスン</h1>
+    <p>わからないことを何でも聞いてみよう！</p>
+    <a href="../vol1/index.html" class="back-link">← 上巻に戻る</a>
+  </header>
+
+  <main class="main">
+    <div class="intro">
+      <h2>🔍 こんな時に使える！</h2>
+      <p>Google検索より早くて分かりやすい！<br>専門用語もやさしく説明してくれる！</p>
+      <ul>
+        <li>「ライバル会社は何やってる？」</li>
+        <li>「この業界の平均年収は？」</li>
+        <li>「〇〇のやり方を教えて」</li>
+        <li>「この言葉の意味は？」</li>
+        <li>「小学生でもわかるように説明して」</li>
+      </ul>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">レッスン①</div>
+      <h3>言葉の意味を聞こう</h3>
+      <p>難しい言葉をやさしく説明してもらおう！</p>
+      <div class="copy-area">
+        <div class="copy-text">「コンプライアンス」という言葉の意味を
+小学生でもわかるように説明してください。
+
+また、会社で具体的にどんなことに
+気をつければいいかも教えてください。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーしてChatGPTに送る</button>
+      <div class="tip">
+        <h4>💡 ポイント</h4>
+        <p>「小学生でもわかるように」と言うと、難しい言葉もスッキリわかる！</p>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">レッスン②</div>
+      <h3>やり方を教えてもらおう</h3>
+      <p>知らないことのやり方を聞いてみよう！</p>
+      <div class="copy-area">
+        <div class="copy-text">Excelで簡単な表を作る方法を
+ステップバイステップで教えてください。
+
+・列の幅を変える方法
+・セルに色をつける方法
+・罫線を引く方法
+
+パソコン初心者向けにお願いします。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーしてChatGPTに送る</button>
+      <div class="tip">
+        <h4>💡 ポイント</h4>
+        <p>「ステップバイステップで」と言うと、順番に教えてくれる！</p>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">レッスン③</div>
+      <h3>業界のことを調べよう</h3>
+      <p>業界の情報を教えてもらおう！</p>
+      <div class="copy-area">
+        <div class="copy-text">〇〇業界について教えてください。
+
+・最近のトレンドは？
+・他社はどんな取り組みをしている？
+・これから伸びそうな分野は？
+
+経営者向けにまとめてください。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーしてChatGPTに送る</button>
+      <div class="tip">
+        <h4>💡 ポイント</h4>
+        <p>「もっと詳しく」「具体例を出して」と追加で聞くこともできる！</p>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">レッスン④</div>
+      <h3>法律や制度を調べよう</h3>
+      <p>仕事に関係する法律をわかりやすく教えてもらおう！</p>
+      <div class="copy-area">
+        <div class="copy-text">有給休暇の制度について教えてください。
+
+・何日もらえるのか
+・いつから使えるのか
+・会社としてどう対応すべきか
+
+経営者がスタッフに説明できるように、
+わかりやすくお願いします。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーしてChatGPTに送る</button>
+      <div class="tip">
+        <h4>💡 ポイント</h4>
+        <p>法律の話も「わかりやすく」とお願いすれば、噛み砕いて教えてくれる！</p>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">レッスン⑤</div>
+      <h3>相場を調べよう</h3>
+      <p>価格や給料の相場を教えてもらおう！</p>
+      <div class="copy-area">
+        <div class="copy-text">中小企業の事務員の給料相場を教えてください。
+
+知りたいこと：
+・月給の相場（地方の場合）
+・ボーナスは普通どれくらい？
+・他にどんな待遇があると喜ばれる？
+
+求人を出す参考にしたいです。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーしてChatGPTに送る</button>
+      <div class="tip">
+        <h4>💡 ポイント</h4>
+        <p>相場を知っておくと、交渉や判断がしやすくなる！</p>
+      </div>
+    </div>
+
+    <div class="next-section">
+      <h3>🎉 レッスン完了！</h3>
+      <p>他のカテゴリも試してみよう！</p>
+      
+      <div class="other-categories">
+        <a href="writing.html" class="cat-link">📝 文章作成</a>
+        <a href="consulting.html" class="cat-link">🧠 経営の相談</a>
+        <a href="sales-doc.html" class="cat-link">📊 営業資料</a>
+        <a href="sales-talk.html" class="cat-link">🗣️ 営業トーク</a>
+        <a href="decision.html" class="cat-link">🤔 迷った時</a>
+        <a href="sns.html" class="cat-link">📱 SNS投稿</a>
+        <a href="idea.html" class="cat-link">💡 アイデア出し</a>
+      </div>
+
+      <a href="../vol1/index.html" class="back-btn">← 上巻に戻る</a>
+    </div>
+  </main>
+
+  <a href="https://chat.openai.com" target="_blank" class="chatgpt-float">
+    <span class="chatgpt-icon">💬</span>
+    <span class="chatgpt-text">ChatGPTを開く</span>
+  </a>
+
+  <script>
+    function copyText(btn) {
+      const text = btn.parentElement.querySelector('.copy-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ コピーしました！';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '📋 コピーしてChatGPTに送る'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

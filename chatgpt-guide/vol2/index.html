@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT 中巻 | もっと上手に使うコツ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --purple: #667eea; --purple-light: #764ba2; --blue: #4facfe; --green: #00c851; --orange: #ff9f43; --dark: #2d3436; --gray: #636e72; --light: #f8f9fa; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'M PLUS Rounded 1c', sans-serif; background: linear-gradient(180deg, #f0f3ff 0%, #f0f9ff 50%, #f8f5ff 100%); color: var(--dark); line-height: 1.9; font-size: 17px; }
+    .hero { background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%); padding: 50px 20px 90px; text-align: center; position: relative; }
+    .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='3' fill='white' fill-opacity='0.15'/%3E%3C/svg%3E"); }
+    .hero-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    .series-badge { display: inline-block; background: rgba(255,255,255,0.95); color: var(--purple); padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .hero-emoji { font-size: 70px; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(28px, 7vw, 44px); font-weight: 800; color: white; text-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 12px; }
+    .hero-sub { font-size: 18px; color: white; opacity: 0.95; }
+    .volume-badge { display: inline-block; background: white; color: var(--purple); padding: 14px 32px; border-radius: 50px; font-weight: 800; font-size: 18px; margin-top: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+    .wave { position: relative; margin-top: -50px; z-index: 2; }
+    .wave svg { display: block; width: 100%; height: auto; }
+    .main { max-width: 700px; margin: 0 auto; padding: 20px 20px 60px; }
+    .section { margin-bottom: 60px; opacity: 0; transform: translateY(40px); transition: all 0.6s ease-out; }
+    .section.visible { opacity: 1; transform: translateY(0); }
+    .section-label { display: inline-block; background: linear-gradient(135deg, var(--purple), var(--purple-light)); color: white; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .section h2 { font-size: clamp(24px, 6vw, 32px); font-weight: 800; margin-bottom: 20px; line-height: 1.5; }
+    .card { background: white; border-radius: 24px; padding: 28px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 2px solid transparent; }
+    .card-purple { border-color: #e8daff; background: linear-gradient(135deg, #f8f5ff, white); }
+    .card-blue { border-color: #d6eaff; background: linear-gradient(135deg, #f0f9ff, white); }
+    .card-green { border-color: #d4edda; background: linear-gradient(135deg, #f0fff4, white); }
+    .card-orange { border-color: #ffe8d6; background: linear-gradient(135deg, #fff8f0, white); }
+    .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .card h3 .emoji { font-size: 28px; }
+    .tip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+    .tip-item { background: white; border-radius: 16px; padding: 20px; text-align: center; border: 2px solid #e8daff; }
+    .tip-item .emoji { font-size: 36px; margin-bottom: 8px; }
+    .tip-item h5 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .tip-item p { font-size: 13px; color: var(--gray); }
+    .example-box { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; padding: 28px; margin: 24px 0; color: white; }
+    .example-box h4 { font-size: 16px; margin-bottom: 16px; opacity: 0.9; }
+    .example-bad, .example-good { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .example-label { font-size: 12px; font-weight: 700; margin-bottom: 8px; display: block; }
+    .example-bad .example-label { color: #ff6b6b; }
+    .example-good .example-label { color: #51cf66; }
+    .example-text { font-size: 15px; line-height: 1.7; }
+    .lesson-box { background: linear-gradient(135deg, var(--purple), var(--purple-light)); border-radius: 20px; padding: 28px; margin: 24px 0; color: white; }
+    .lesson-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .lesson-badge { background: rgba(255,255,255,0.25); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 700; }
+    .lesson-title { font-size: 18px; font-weight: 700; }
+    .copy-area { background: rgba(255,255,255,0.95); border-radius: 12px; padding: 20px; margin: 16px 0; }
+    .copy-text { color: var(--dark); font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+    .copy-btn { background: white; color: var(--purple); border: none; padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+    .copy-btn:hover { transform: scale(1.05); }
+    .copy-btn.copied { background: var(--green); color: white; }
+    .highlight { background: linear-gradient(135deg, var(--purple), var(--purple-light)); border-radius: 20px; padding: 32px; text-align: center; color: white; margin: 24px 0; }
+    .highlight .emoji { font-size: 48px; margin-bottom: 12px; }
+    .highlight h3 { font-size: 22px; margin-bottom: 12px; }
+    .highlight p { font-size: 16px; opacity: 0.95; }
+    .check-list { list-style: none; background: white; border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .check-list li { padding: 12px 0; border-bottom: 1px dashed #e9ecef; font-size: 16px; display: flex; align-items: center; gap: 12px; }
+    .check-list li:last-child { border-bottom: none; }
+    .check-list li::before { content: '✅'; font-size: 20px; }
+    .nav-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .nav-btn { display: inline-block; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+    .nav-btn.prev { background: #e9ecef; color: var(--dark); }
+    .nav-btn.next { background: linear-gradient(135deg, var(--green), #00b894); color: white; box-shadow: 0 8px 30px rgba(0,200,81,0.3); }
+    .nav-btn:hover { transform: translateY(-3px); }
+    .back-link { display: block; text-align: center; margin-top: 20px; color: var(--gray); text-decoration: none; font-size: 14px; }
+    .chatgpt-float { position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, #10a37f, #1a7f64); color: white; padding: 14px 24px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 30px rgba(16, 163, 127, 0.4); transition: all 0.3s; z-index: 1000; }
+    .chatgpt-float:hover { transform: translateY(-4px); }
+    .chatgpt-icon { font-size: 20px; }
+    .footer { background: linear-gradient(135deg, var(--purple), var(--purple-light)); color: white; text-align: center; padding: 40px 20px; }
+    .footer-logo { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    @media (max-width: 500px) { .tip-grid { grid-template-columns: 1fr; } .nav-buttons { flex-direction: column; } .nav-btn { width: 100%; text-align: center; } .chatgpt-float { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 14px; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <span class="series-badge">📚 ChatGPT 初心者編</span>
+      <div class="hero-emoji">📘</div>
+      <h1>もっと上手に使うコツ</h1>
+      <p class="hero-sub">良い回答を引き出すテクニック</p>
+      <span class="volume-badge">中巻</span>
+    </div>
+  </header>
+  <div class="wave"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,60 C300,120 600,0 1200,60 L1200,120 L0,120 Z" fill="#f0f3ff"/></svg></div>
+  <main class="main">
+    <section class="section">
+      <span class="section-label">中巻のゴール</span>
+      <h2>ChatGPTから<br>「良い回答」を引き出す！💡</h2>
+      <div class="card card-purple">
+        <h3><span class="emoji">🎯</span> こんな経験ありませんか？</h3>
+        <p>「なんか思ってたのと違う…」<br>「もっとこうしてほしかったのに…」<br><br>それ、聞き方を変えるだけで解決します！</p>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ①</span>
+      <h2>具体的に伝える📝</h2>
+      <div class="card card-blue">
+        <h3><span class="emoji">💬</span> 人に頼むのと同じ！</h3>
+        <p>「いい感じにして」より「〇〇を△△な感じで」と伝えた方が、思い通りになりますよね？<br><br>ChatGPTも同じです！</p>
+      </div>
+      <div class="example-box">
+        <h4>例：メールを作ってもらう場合</h4>
+        <div class="example-bad"><span class="example-label">❌ ざっくりすぎる</span><div class="example-text">お礼のメールを作って</div></div>
+        <div class="example-good"><span class="example-label">✅ 具体的に伝える</span><div class="example-text">昨日打ち合わせしたA社の田中さんにお礼メールを作って。<br>来週また連絡すると伝えたい。丁寧な感じで。</div></div>
+      </div>
+      <div class="tip-grid">
+        <div class="tip-item"><div class="emoji">👤</div><h5>誰に？</h5><p>相手の立場や関係性</p></div>
+        <div class="tip-item"><div class="emoji">📋</div><h5>何を？</h5><p>伝えたい内容</p></div>
+        <div class="tip-item"><div class="emoji">🎨</div><h5>どんな風に？</h5><p>トーンや長さ</p></div>
+        <div class="tip-item"><div class="emoji">🎯</div><h5>目的は？</h5><p>何のために</p></div>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">具体的に頼む</span></div>
+        <p>この文章をそのままChatGPTに送ってみよう！</p>
+        <div class="copy-area"><div class="copy-text">新規のお客様に見積もりを送るメールを作ってください。
+
+・相手：株式会社〇〇の山田部長
+・見積もり金額：50万円（税別）
+・納期：来月末
+・トーン：丁寧だけど堅すぎない
+
+「ご検討ください」で締めてください。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ②</span>
+      <h2>追加で注文する🔄</h2>
+      <div class="card card-green">
+        <h3><span class="emoji">💡</span> 一発で完璧じゃなくていい！</h3>
+        <p>ChatGPTの回答は「たたき台」！<br>気に入らなければ、追加で注文すればOK！<br><br>何回頼んでも怒られません😊</p>
+      </div>
+      <div class="card card-orange">
+        <h3><span class="emoji">🗣️</span> こんな風に追加注文</h3>
+        <ul style="list-style:none; margin-top:12px;">
+          <li style="padding:8px 0;">👉「もっと短くして」</li>
+          <li style="padding:8px 0;">👉「もう少しカジュアルに」</li>
+          <li style="padding:8px 0;">👉「箇条書きにして」</li>
+          <li style="padding:8px 0;">👉「別のパターンも見せて」</li>
+          <li style="padding:8px 0;">👉「〇〇の部分だけ変えて」</li>
+          <li style="padding:8px 0;">👉「もっと具体的に」</li>
+        </ul>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">追加注文の練習</span></div>
+        <p>まずこれを送って、回答が来たら追加注文してみよう！</p>
+        <div class="copy-area"><div class="copy-text">うちの会社の紹介文を作ってください。
+100文字くらいで。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+        <p style="margin-top:16px; font-size:14px; opacity:0.9;">↓ 回答が来たら、こう追加してみよう</p>
+        <div class="copy-area"><div class="copy-text">もっとやわらかい感じにして。
+「お客様に寄り添う」というキーワードを入れて。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ③</span>
+      <h2>役割を与える🎭</h2>
+      <div class="card card-purple">
+        <h3><span class="emoji">🎯</span> 「〇〇として答えて」が最強！</h3>
+        <p>ChatGPTに役割を与えると、その視点で答えてくれます！<br><br>プロの意見が欲しい時に便利！</p>
+      </div>
+      <div class="example-box">
+        <h4>役割を与えるとこう変わる！</h4>
+        <div class="example-bad"><span class="example-label">普通に聞く</span><div class="example-text">採用面接で聞くべき質問は？</div></div>
+        <div class="example-good"><span class="example-label">✅ 役割を与える</span><div class="example-text">あなたは採用のプロです。<br>中小企業が未経験者を採用する面接で、<br>聞くべき質問を5つ教えてください。</div></div>
+      </div>
+      <div class="card card-blue">
+        <h3><span class="emoji">💼</span> 使える役割の例</h3>
+        <ul style="list-style:none; margin-top:12px;">
+          <li style="padding:8px 0;">👔 「経営コンサルタントとして」</li>
+          <li style="padding:8px 0;">📊 「マーケティングのプロとして」</li>
+          <li style="padding:8px 0;">✍️ 「コピーライターとして」</li>
+          <li style="padding:8px 0;">👨‍💼 「人事担当者として」</li>
+          <li style="padding:8px 0;">🎯 「営業のベテランとして」</li>
+        </ul>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">役割を与えて質問</span></div>
+        <div class="copy-area"><div class="copy-text">あなたは中小企業の経営コンサルタントです。
+
+従業員10人の会社が、
+人手不足を解消するためにできることを
+5つ提案してください。
+
+コストがかからない順に並べてください。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ④</span>
+      <h2>例を見せる📋</h2>
+      <div class="card card-green">
+        <h3><span class="emoji">🎯</span> 「こんな感じで」が伝わる！</h3>
+        <p>言葉で説明するより、例を見せた方が早い！<br><br>過去のメールや文章を貼り付けて「こんな感じで作って」と頼めばOK！</p>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">例を見せて頼む</span></div>
+        <div class="copy-area"><div class="copy-text">以下の例と同じトーンで、別のお客様へのメールを作ってください。
+
+【例】
+〇〇様
+
+いつもお世話になっております。
+先日はお忙しい中、お時間をいただきありがとうございました。
+ご検討のほど、よろしくお願いいたします。
+
+【今回作ってほしいメール】
+・相手：△△株式会社の佐藤様
+・内容：見積もりを送る
+・添付ファイルがあることを伝える</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ⑤</span>
+      <h2>条件を指定する🎚️</h2>
+      <div class="card card-orange">
+        <h3><span class="emoji">📏</span> 「〇〇文字で」「〇個で」</h3>
+        <p>長さや数を指定すると、コントロールしやすい！</p>
+        <ul style="list-style:none; margin-top:16px;">
+          <li style="padding:8px 0;">📝 「100文字以内で」</li>
+          <li style="padding:8px 0;">🔢 「5つ挙げて」</li>
+          <li style="padding:8px 0;">📋 「箇条書きで」</li>
+          <li style="padding:8px 0;">📊 「表形式で」</li>
+          <li style="padding:8px 0;">🎯 「結論から先に」</li>
+        </ul>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">条件を指定する</span></div>
+        <div class="copy-area"><div class="copy-text">中小企業がSNSを活用するメリットを教えて。
+
+条件：
+・5つに絞る
+・各項目は2行以内で
+・具体例も入れる
+・初心者でもわかる言葉で</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">コツ⑥</span>
+      <h2>やりとりで磨き上げる💬</h2>
+      <div class="card card-purple">
+        <h3><span class="emoji">🔄</span> 会話しながら完成させる！</h3>
+        <p>1回で完璧を目指さなくてOK！<br>ChatGPTと会話しながら、少しずつ理想に近づけていこう！</p>
+      </div>
+      <div class="card card-blue">
+        <h3><span class="emoji">💡</span> こんなイメージ</h3>
+        <p>料理の味見みたいなもの！<br>「もう少し塩を…」「もっとやわらかく…」と調整していく感じ。</p>
+      </div>
+      <div class="example-box">
+        <h4>📱 実際のやりとり例</h4>
+        <div class="example-bad"><span class="example-label">👤 あなた（1回目）</span><div class="example-text">新サービス開始のお知らせメールを作って</div></div>
+        <div class="example-good"><span class="example-label">🤖 ChatGPT</span><div class="example-text">株式会社〇〇様<br>平素より格別のご高配を賜り…（長い丁寧なメール）</div></div>
+        <div class="example-bad"><span class="example-label">👤 あなた（2回目）</span><div class="example-text">もっと短く、親しみやすい感じで</div></div>
+        <div class="example-good"><span class="example-label">🤖 ChatGPT</span><div class="example-text">〇〇様<br>いつもありがとうございます！この度…（短めのメール）</div></div>
+        <div class="example-bad"><span class="example-label">👤 あなた（3回目）</span><div class="example-text">いいね！最後に「ご不明点はお気軽に」を追加して</div></div>
+        <div class="example-good"><span class="example-label">🤖 ChatGPT</span><div class="example-text">（完成したメール）✨</div></div>
+      </div>
+      <div class="card card-green">
+        <h3><span class="emoji">🗣️</span> よく使うフィードバック</h3>
+        <ul style="list-style:none; margin-top:12px;">
+          <li style="padding:8px 0;">👉「いいね！でも〇〇だけ変えて」</li>
+          <li style="padding:8px 0;">👉「惜しい！もう少し〇〇な感じで」</li>
+          <li style="padding:8px 0;">👉「最初の部分はOK、後半を〇〇に」</li>
+          <li style="padding:8px 0;">👉「方向性はいい！もっと〇〇して」</li>
+          <li style="padding:8px 0;">👉「〇〇の部分を削除して」</li>
+        </ul>
+      </div>
+      <div class="lesson-box">
+        <div class="lesson-header"><span class="lesson-badge">✏️ やってみよう</span><span class="lesson-title">3回やりとりしてみる</span></div>
+        <p>まずこれを送って👇</p>
+        <div class="copy-area"><div class="copy-text">会社の朝礼で話す1分間スピーチを作って。
+テーマは「最近気づいたこと」で。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+        <p style="margin-top:16px; font-size:14px; opacity:0.9;">↓ 回答が来たら、自分の言葉でフィードバック！</p>
+        <div class="copy-area"><div class="copy-text">もっとくだけた口調にして。
+「えー」「ですよね」みたいな話し言葉で。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+        <p style="margin-top:16px; font-size:14px; opacity:0.9;">↓ さらに調整！</p>
+        <div class="copy-area"><div class="copy-text">いい感じ！最後にオチを入れて、
+笑いで終われるようにして。</div></div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+      <div class="highlight" style="background: linear-gradient(135deg, #00c851, #00b894);">
+        <div class="emoji">✨</div>
+        <h3>ポイント</h3>
+        <p>「いいね」「惜しい」など感想を伝えると<br>ChatGPTも調整しやすくなる！</p>
+      </div>
+    </section>
+    <section class="section">
+      <span class="section-label">おさらい</span>
+      <h2>中巻でやったこと✅</h2>
+      <ul class="check-list">
+        <li>具体的に伝えると良い回答が来る</li>
+        <li>追加注文で調整できる</li>
+        <li>役割を与えるとプロの視点になる</li>
+        <li>例を見せると伝わりやすい</li>
+        <li>条件を指定するとコントロールできる</li>
+        <li>やりとりしながら磨き上げる</li>
+      </ul>
+      <div class="highlight">
+        <div class="emoji">🚀</div>
+        <h3>コツを掴んだ！</h3>
+        <p>これであなたもChatGPT中級者！<br>下巻では実務での活用法を学ぼう！</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="nav-buttons">
+        <a href="../vol1/index.html" class="nav-btn prev">← 上巻に戻る</a>
+        <a href="../vol3/index.html" class="nav-btn next">下巻へ進む →</a>
+      </div>
+      <a href="../index.html" class="back-link">← 目次に戻る</a>
+    </section>
+  </main>
+  <a href="https://chat.openai.com" target="_blank" class="chatgpt-float"><span class="chatgpt-icon">💬</span><span class="chatgpt-text">ChatGPTを開く</span></a>
+  <footer class="footer"><div class="footer-logo">✨ ChatGPT 初心者編 ✨</div><p>中巻：もっと上手に使うコツ</p></footer>
+  <script>
+    const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
+    document.querySelectorAll('.section').forEach(section => observer.observe(section));
+    function copyText(btn) { const text = btn.parentElement.querySelector('.copy-text').innerText; navigator.clipboard.writeText(text).then(() => { btn.textContent = '✅ コピーしました！'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '📋 コピーする'; btn.classList.remove('copied'); }, 2000); }); }
+  </script>
+</body>
+</html>

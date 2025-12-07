@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT 初心者編 上巻 | ChatGPT 初心者編</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #ff6b9d;
+      --orange: #ff9f43;
+      --yellow: #feca57;
+      --green: #1dd1a1;
+      --blue: #54a0ff;
+      --purple: #a55eea;
+      --dark: #2d3436;
+      --gray: #636e72;
+      --light: #f8f9fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      background: linear-gradient(180deg, #fff5f8 0%, #f0f9ff 50%, #f0fff4 100%);
+      color: var(--dark);
+      line-height: 1.9;
+      font-size: 17px;
+      min-height: 100vh;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--orange) 50%, var(--yellow) 100%);
+      padding: 50px 20px 90px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='3' fill='white' fill-opacity='0.2'/%3E%3C/svg%3E");
+      animation: sparkle 20s linear infinite;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .series-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.95);
+      color: var(--pink);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .hero-emoji {
+      font-size: 70px;
+      margin-bottom: 16px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 7vw, 44px);
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-bottom: 12px;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: white;
+      opacity: 0.95;
+    }
+
+    .volume-badge {
+      display: inline-block;
+      background: white;
+      color: var(--orange);
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 18px;
+      margin-top: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    /* Wave */
+    .wave {
+      position: relative;
+      margin-top: -50px;
+      z-index: 2;
+    }
+
+    .wave svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Goal Banner */
+    .goal-banner {
+      max-width: 700px;
+      margin: -20px auto 40px;
+      padding: 0 20px;
+    }
+
+    .goal-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px 28px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 3px solid var(--yellow);
+    }
+
+    .goal-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .goal-text h3 {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+
+    .goal-text p {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    /* Main Content */
+    .main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 60px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.6s ease-out;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-label {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--pink), var(--orange));
+      color: white;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-size: clamp(24px, 6vw, 32px);
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 2px solid transparent;
+    }
+
+    .card-pink { border-color: #ffe0eb; background: linear-gradient(135deg, #fff5f8, white); }
+    .card-orange { border-color: #ffe8d6; background: linear-gradient(135deg, #fff8f0, white); }
+    .card-yellow { border-color: #fff3cd; background: linear-gradient(135deg, #fffbf0, white); }
+    .card-green { border-color: #d4edda; background: linear-gradient(135deg, #f0fff4, white); }
+    .card-blue { border-color: #d6eaff; background: linear-gradient(135deg, #f0f9ff, white); }
+    .card-purple { border-color: #e8daff; background: linear-gradient(135deg, #f8f5ff, white); }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card h3 .emoji {
+      font-size: 28px;
+    }
+
+    /* 社長の使い方リスト（1列） */
+    .ceo-list {
+      margin: 24px 0;
+    }
+
+    .ceo-item-full {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      border: 2px solid #f0f0f0;
+      transition: all 0.3s;
+    }
+
+    .ceo-item-full:hover {
+      border-color: var(--orange);
+      transform: translateX(8px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .ceo-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #fff8f0, #ffe8d6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ceo-content h5 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    .ceo-content p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.8;
+    }
+
+    .example-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .example-list li {
+      font-size: 15px;
+      color: var(--gray);
+      padding: 6px 0;
+      padding-left: 24px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .example-list li::before {
+      content: '•';
+      position: absolute;
+      left: 8px;
+      color: var(--orange);
+      font-weight: bold;
+    }
+
+    @media (max-width: 500px) {
+      .ceo-item-full {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+
+    /* 社長の使い方グリッド */
+    .ceo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    @media (max-width: 500px) {
+      .ceo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ceo-item {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid #f0f0f0;
+      transition: all 0.3s;
+    }
+
+    .ceo-item:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .ceo-item .emoji {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .ceo-item h5 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+
+    .ceo-item p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* Highlight Box */
+    .highlight {
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      border-radius: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      color: white;
+      margin: 24px 0;
+      box-shadow: 0 8px 30px rgba(255, 159, 67, 0.3);
+    }
+
+    .highlight .emoji {
+      font-size: 50px;
+      margin-bottom: 14px;
+    }
+
+    .highlight h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .highlight p {
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    /* Lesson Box */
+    .lesson-box {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 24px;
+      padding: 28px;
+      margin: 30px 0;
+      color: white;
+    }
+
+    .lesson-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .lesson-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .lesson-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .lesson-box p {
+      font-size: 15px;
+      opacity: 0.95;
+      margin-bottom: 16px;
+    }
+
+    .copy-area {
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .copy-text {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--dark);
+      white-space: pre-line;
+    }
+
+    .copy-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(29, 209, 161, 0.3);
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(29, 209, 161, 0.4);
+    }
+
+    .copy-btn.copied {
+      background: var(--purple);
+    }
+
+    .lesson-steps {
+      background: rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .lesson-steps h4 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      opacity: 0.95;
+    }
+
+    .lesson-steps ol {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 2;
+    }
+
+    .lesson-steps a {
+      color: var(--yellow);
+      font-weight: 700;
+    }
+
+    /* Comparison Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 600px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .compare-box {
+      padding: 24px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .compare-box.bad {
+      background: linear-gradient(135deg, #ffe5e5, #fff0f0);
+      border: 2px solid #ffcccc;
+    }
+
+    .compare-box.good {
+      background: linear-gradient(135deg, #e0ffe5, #f0fff4);
+      border: 2px solid #b8f5c8;
+    }
+
+    .compare-box .emoji {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+
+    .compare-box h4 {
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+
+    .compare-box.bad h4 { color: #dc3545; }
+    .compare-box.good h4 { color: #28a745; }
+
+    .compare-box ul {
+      list-style: none;
+      text-align: left;
+      font-size: 15px;
+      color: var(--gray);
+    }
+
+    .compare-box li {
+      padding: 6px 0;
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .compare-box.bad li::before {
+      content: '😢';
+      position: absolute;
+      left: 0;
+      font-size: 14px;
+    }
+
+    .compare-box.good li::before {
+      content: '✨';
+      position: absolute;
+      left: 0;
+      font-size: 14px;
+    }
+
+    /* Benefit Grid */
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    @media (max-width: 500px) {
+      .benefit-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .benefit-item {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      border: 2px solid #f0f0f0;
+    }
+
+    .benefit-item .emoji {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .benefit-item h5 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .benefit-item p {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    /* Big Text */
+    .big-text {
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 800;
+      text-align: center;
+      margin: 28px 0;
+      line-height: 1.6;
+    }
+
+    .big-text .accent {
+      background: linear-gradient(135deg, var(--pink), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Tip Box */
+    .tip-box {
+      background: linear-gradient(135deg, #e0ffe5, #c8f7d6);
+      border-radius: 20px;
+      padding: 22px;
+      margin: 20px 0;
+      border-left: 5px solid var(--green);
+    }
+
+    .tip-box h4 {
+      font-size: 16px;
+      color: #155724;
+      margin-bottom: 8px;
+    }
+
+    .tip-box p {
+      color: #1e7e34;
+      font-size: 15px;
+    }
+
+    /* Warning Box */
+    .warning-box {
+      background: linear-gradient(135deg, #fff8e6, #fff3cd);
+      border-radius: 20px;
+      padding: 22px;
+      margin: 20px 0;
+      border-left: 5px solid var(--orange);
+    }
+
+    .warning-box h4 {
+      font-size: 16px;
+      color: #856404;
+      margin-bottom: 8px;
+    }
+
+    .warning-box p {
+      color: #856404;
+      font-size: 15px;
+    }
+
+    /* No List */
+    .no-list {
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .no-list li {
+      padding: 12px 18px;
+      padding-left: 46px;
+      position: relative;
+      background: #fff5f5;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      color: var(--gray);
+      border: 1px solid #ffe0e0;
+      font-size: 15px;
+    }
+
+    .no-list li::before {
+      content: '❌';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+
+    /* Check List */
+    .check-list {
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .check-list li {
+      padding: 12px 18px;
+      padding-left: 46px;
+      position: relative;
+      background: #f0fff4;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .check-list li::before {
+      content: '✅';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+
+    /* Complete Section */
+    .complete {
+      background: linear-gradient(135deg, var(--green), #00b894);
+      border-radius: 30px;
+      padding: 50px 24px;
+      text-align: center;
+      color: white;
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .complete::before {
+      content: '🎊';
+      position: absolute;
+      font-size: 100px;
+      opacity: 0.15;
+      top: -20px;
+      left: -20px;
+    }
+
+    .complete::after {
+      content: '🎉';
+      position: absolute;
+      font-size: 100px;
+      opacity: 0.15;
+      bottom: -20px;
+      right: -20px;
+    }
+
+    .complete .emoji {
+      font-size: 70px;
+      margin-bottom: 16px;
+      animation: bounce 1s ease-in-out infinite;
+    }
+
+    .complete h3 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .complete p {
+      font-size: 16px;
+      opacity: 0.95;
+      line-height: 1.8;
+    }
+
+    .next-btn {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 16px 40px;
+      background: white;
+      color: var(--green);
+      border-radius: 50px;
+      font-size: 17px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: all 0.3s;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+    }
+
+    /* Category Selection Grid */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    @media (max-width: 500px) {
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .category-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: white;
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-decoration: none;
+      border: 3px solid #f0f0f0;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .category-btn:hover {
+      border-color: var(--orange);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(255,159,67,0.2);
+    }
+
+    .category-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .category-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+
+    .category-desc {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    /* ChatGPT Float Button */
+    .chatgpt-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #10a37f, #1a7f64);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 30px rgba(16, 163, 127, 0.4);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .chatgpt-float:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(16, 163, 127, 0.5);
+    }
+
+    .chatgpt-icon {
+      font-size: 20px;
+    }
+
+    @media (max-width: 500px) {
+      .chatgpt-float {
+        bottom: 16px;
+        right: 16px;
+        padding: 12px 18px;
+        font-size: 14px;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .footer p {
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    /* Floating */
+    .float-emoji {
+      position: fixed;
+      font-size: 28px;
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: -1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .float-emoji:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
+    .float-emoji:nth-child(2) { top: 40%; right: 5%; animation-delay: 1s; }
+    .float-emoji:nth-child(3) { top: 60%; left: 8%; animation-delay: 2s; }
+    .float-emoji:nth-child(4) { top: 80%; right: 8%; animation-delay: 3s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @media (max-width: 600px) {
+      .float-emoji { display: none; }
+      .hero { padding: 40px 20px 70px; }
+      .goal-card { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Decorations -->
+  <div class="float-emoji">💬</div>
+  <div class="float-emoji">✨</div>
+  <div class="float-emoji">🚀</div>
+  <div class="float-emoji">💡</div>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="series-badge">📖 初心者編</div>
+      <div class="hero-emoji">🤖</div>
+      <h1>ChatGPTって何？</h1>
+      <p class="hero-sub">実際に使いながら覚えよう！</p>
+      <div class="volume-badge">上巻</div>
+    </div>
+  </header>
+
+  <!-- Wave -->
+  <div class="wave">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 120L60 105C120 90 240 60 360 55C480 50 600 70 720 80C840 90 960 90 1080 80C1200 70 1320 50 1380 40L1440 30V0H1380C1320 0 1200 0 1080 0C960 0 840 0 720 0C600 0 480 0 360 0C240 0 120 0 60 0H0V120Z" fill="url(#grad)"/>
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="1440" y2="0">
+          <stop offset="0%" stop-color="#ff6b9d"/>
+          <stop offset="50%" stop-color="#ff9f43"/>
+          <stop offset="100%" stop-color="#feca57"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Goal Banner -->
+  <div class="goal-banner">
+    <div class="goal-card">
+      <div class="goal-icon">🎯</div>
+      <div class="goal-text">
+        <h3>この巻のゴール</h3>
+        <p>ChatGPTを理解して、3回使ってみる！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Section 1: ChatGPTって何？ -->
+    <section class="section">
+      <span class="section-label">まずはここから</span>
+      <h2>ChatGPTって<br>なにができるの？🤔</h2>
+
+      <div class="highlight">
+        <div class="emoji">🧑‍💼✨</div>
+        <h3>24時間働いてくれる<br>超優秀なアシスタント！</h3>
+        <p>話しかけるだけで、なんでも手伝ってくれる！</p>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-box bad">
+          <div class="emoji">😫</div>
+          <h4>自分でやると…</h4>
+          <ul>
+            <li>言葉選びに悩む</li>
+            <li>時間がかかる</li>
+            <li>これで合ってる？と不安</li>
+            <li>調べものが大変</li>
+          </ul>
+        </div>
+        <div class="compare-box good">
+          <div class="emoji">😊</div>
+          <h4>ChatGPTに頼むと…</h4>
+          <ul>
+            <li>「こうして」で完成！</li>
+            <li>数秒で出てくる</li>
+            <li>何回でもやり直しOK</li>
+            <li>なんでも教えてくれる</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="big-text">あなたは<span class="accent">「こうして」って言うだけ！</span></p>
+    </section>
+
+    <!-- Section 2: 活用シーン -->
+    <section class="section">
+      <span class="section-label">活用シーン</span>
+      <h2>こんな場面で使えます！🎯</h2>
+
+      <div class="card card-orange">
+        <h3><span class="emoji">💼</span> メールだけじゃない！</h3>
+        <p>「便利そうだけど、何に使えるの？」<br>実は、<strong>毎日の仕事でこんなに活躍</strong>します！</p>
+      </div>
+
+      <div class="ceo-list">
+        <div class="ceo-item-full">
+          <div class="ceo-icon">📝</div>
+          <div class="ceo-content">
+            <h5>文章作成</h5>
+            <ul class="example-list">
+              <li>お客様へのメール作成</li>
+              <li>社内へのSlack・LINE連絡</li>
+              <li>日報・週報・月報の作成</li>
+              <li>お詫び文・お礼状</li>
+              <li>案内文・お知らせ文</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">🧠</div>
+          <div class="ceo-content">
+            <h5>経営の相談</h5>
+            <ul class="example-list">
+              <li>「この判断で合ってるかな？」</li>
+              <li>「AとBどっちを選ぶべき？」</li>
+              <li>「この問題、どう解決すればいい？」</li>
+              <li>「メリット・デメリットを整理して」</li>
+              <li>「見落としてることない？」</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">📊</div>
+          <div class="ceo-content">
+            <h5>営業資料の作成</h5>
+            <ul class="example-list">
+              <li>提案書の文章作成</li>
+              <li>見積もりの説明文</li>
+              <li>お客様への説明資料</li>
+              <li>サービス紹介文</li>
+              <li>契約書の説明文</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">🗣️</div>
+          <div class="ceo-content">
+            <h5>営業トーク・話す言葉</h5>
+            <ul class="example-list">
+              <li>「お客様にどう説明すればいい？」</li>
+              <li>「断られた時なんて返せばいい？」</li>
+              <li>「値段が高いと言われたら？」</li>
+              <li>「初対面の挨拶どうする？」</li>
+              <li>「クロージングの言葉は？」</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">🤔</div>
+          <div class="ceo-content">
+            <h5>迷った時の相談</h5>
+            <ul class="example-list">
+              <li>「どうしたらいいかわからない」</li>
+              <li>「この状況どう思う？」</li>
+              <li>「選択肢を整理して」</li>
+              <li>「他にやり方ある？」</li>
+              <li>「優先順位つけて」</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">📱</div>
+          <div class="ceo-content">
+            <h5>SNS投稿の作成</h5>
+            <ul class="example-list">
+              <li>「今日のInstagram何投稿しよう？」</li>
+              <li>「この写真に合う文章考えて」</li>
+              <li>「バズりそうなハッシュタグ教えて」</li>
+              <li>「X（Twitter）用に短くして」</li>
+              <li>「1週間分の投稿ネタ出して」</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">💡</div>
+          <div class="ceo-content">
+            <h5>アイデア出し</h5>
+            <ul class="example-list">
+              <li>「求人広告のキャッチコピー考えて」</li>
+              <li>「キャンペーンの企画を10個出して」</li>
+              <li>「このサービスの名前を20個考えて」</li>
+              <li>「お客様が喜ぶ特典は？」</li>
+              <li>「イベントのアイデアちょうだい」</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="ceo-item-full">
+          <div class="ceo-icon">🔍</div>
+          <div class="ceo-content">
+            <h5>調べもの・リサーチ</h5>
+            <ul class="example-list">
+              <li>「ライバル会社は何やってる？」</li>
+              <li>「この業界の平均年収は？」</li>
+              <li>「〇〇のやり方を教えて」</li>
+              <li>「この言葉の意味は？」</li>
+              <li>「小学生でもわかるように説明して」</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <h4>💡 ポイント</h4>
+        <p>最初はメール作成や文章の修正から始めよう！<br>慣れたら相談、営業トーク、SNS…どんどん広がる！<br><strong>「こんなこともできる？」と思ったら、まず聞いてみて！</strong></p>
+      </div>
+    </section>
+
+    <!-- Section 3: アカウント確認 -->
+    <section class="section">
+      <span class="section-label">確認しよう</span>
+      <h2>アカウント持ってる？🔑</h2>
+
+      <div class="card card-yellow">
+        <h3><span class="emoji">📱</span> まずはチェック！</h3>
+        <p>ChatGPTを使うにはアカウントが必要です。<br>以前、西川が全員分作成しています。</p>
+      </div>
+
+      <div class="warning-box">
+        <h4>⚠️ アカウントがない・わからない人</h4>
+        <p>→ <strong>脇本さん</strong>まで連絡してください！</p>
+      </div>
+
+      <div class="tip-box">
+        <h4>✅ アカウントがある人</h4>
+        <p>そのまま下へ進もう！👇</p>
+      </div>
+    </section>
+
+    <!-- Section 4: 特徴を知ろう -->
+    <section class="section">
+      <span class="section-label">安心ポイント</span>
+      <h2>ChatGPTの特徴🌟</h2>
+
+      <div class="benefit-grid">
+        <div class="benefit-item">
+          <div class="emoji">😊</div>
+          <h5>怒らない</h5>
+          <p>何回言っても優しい</p>
+        </div>
+        <div class="benefit-item">
+          <div class="emoji">⚡</div>
+          <h5>めっちゃ速い</h5>
+          <p>人より圧倒的に速い</p>
+        </div>
+        <div class="benefit-item">
+          <div class="emoji">🕐</div>
+          <h5>24時間OK</h5>
+          <p>いつでも相談できる</p>
+        </div>
+        <div class="benefit-item">
+          <div class="emoji">🔄</div>
+          <h5>やり直し無限</h5>
+          <p>納得いくまで何度でも</p>
+        </div>
+      </div>
+
+      <div class="card card-blue">
+        <h3><span class="emoji">❌</span> 覚えなくていいもの</h3>
+        <ul class="no-list">
+          <li>難しい専門用語</li>
+          <li>特殊な書き方（プロンプト）</li>
+          <li>AIの仕組み</li>
+        </ul>
+      </div>
+
+      <div class="highlight" style="background: linear-gradient(135deg, var(--green), #00b894);">
+        <div class="emoji">⭕</div>
+        <h3>覚えるのはコレだけ！</h3>
+        <p>「こうして」と言えば、やってくれる！</p>
+      </div>
+    </section>
+
+    <!-- Lesson 1 -->
+    <section class="section">
+      <span class="section-label">レッスン①</span>
+      <h2>初めての一言を<br>送ってみよう！👋</h2>
+
+      <div class="card card-green">
+        <h3><span class="emoji">🎯</span> まずはあいさつ！</h3>
+        <p>難しいことは考えなくてOK！<br>まずは「初めまして」を送るだけ！</p>
+      </div>
+
+      <div class="lesson-box">
+        <div class="lesson-header">
+          <span class="lesson-badge">✏️ やってみよう</span>
+          <span class="lesson-title">初めての一言</span>
+        </div>
+        <p>この文章をそのままChatGPTに送ってみよう！</p>
+        <div class="copy-area">
+          <div class="copy-text">今日が初めてです。
+優しく教えてください。
+できればゆっくり説明してください。</div>
+        </div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+        <div class="lesson-steps">
+          <h4>📌 やり方</h4>
+          <ol>
+            <li>上の「コピーする」を押す</li>
+            <li><a href="https://chat.openai.com/" target="_blank">ChatGPT</a> を開く</li>
+            <li>貼り付けて送信！</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <h4>✨ 返事が来たら成功！</h4>
+        <p>ChatGPTが優しく返事してくれたはず！<br>これであなたもChatGPTデビュー！🎉</p>
+      </div>
+    </section>
+
+    <!-- Lesson 2 -->
+    <section class="section">
+      <span class="section-label">レッスン②</span>
+      <h2>質問してみよう！🙋</h2>
+
+      <div class="card card-pink">
+        <h3><span class="emoji">❓</span> なんでも聞いていい！</h3>
+        <p>ChatGPTは何を聞いても答えてくれます。<br>気になることを聞いてみよう！</p>
+      </div>
+
+      <div class="lesson-box">
+        <div class="lesson-header">
+          <span class="lesson-badge">✏️ やってみよう</span>
+          <span class="lesson-title">質問してみる</span>
+        </div>
+        <p>好きな方をコピーして送ってみよう！</p>
+        <div class="copy-area">
+          <div class="copy-text">ChatGPTでどんなことができるか、初心者にもわかるように教えて</div>
+        </div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+
+      <p style="text-align:center; margin: 20px 0; color: var(--gray);">または、こっちでもOK👇</p>
+
+      <div class="lesson-box" style="background: linear-gradient(135deg, #00b894, var(--green));">
+        <div class="lesson-header">
+          <span class="lesson-badge">✏️ 別の質問</span>
+          <span class="lesson-title">仕事で使える？</span>
+        </div>
+        <div class="copy-area">
+          <div class="copy-text">仕事でChatGPTを使うメリットを5つ教えて</div>
+        </div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+
+      <div class="tip-box">
+        <h4>💡 コツ</h4>
+        <p>「〇〇を教えて」「〇〇って何？」<br>こんな感じで気軽に聞いてOK！</p>
+      </div>
+    </section>
+
+    <!-- Lesson 3 -->
+    <section class="section">
+      <span class="section-label">レッスン③</span>
+      <h2>文章を作ってもらおう！📝</h2>
+
+      <div class="card card-blue">
+        <h3><span class="emoji">📝</span> これが一番使う！</h3>
+        <p>メール、連絡文、報告書…<br>「こういう文章作って」でぜんぶできる！</p>
+      </div>
+
+      <div class="lesson-box">
+        <div class="lesson-header">
+          <span class="lesson-badge">✏️ やってみよう</span>
+          <span class="lesson-title">文章を作る</span>
+        </div>
+        <p>この指示をそのまま送ってみよう！</p>
+        <div class="copy-area">
+          <div class="copy-text">明日の会議が10時から14時に変更になりました。
+参加者に送るメールを作ってください。
+丁寧な感じでお願いします。</div>
+        </div>
+        <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      </div>
+
+      <div class="tip-box">
+        <h4>🎉 文章が出てきた！</h4>
+        <p>すごくないですか？<br>自分で考えるより早い＆丁寧！</p>
+      </div>
+
+      <div class="card card-yellow" style="margin-top: 20px;">
+        <h3><span class="emoji">🔄</span> 気に入らなかったら？</h3>
+        <p>そのまま追加でお願いすればOK！</p>
+        <ul style="list-style:none; margin-top:12px; font-size:15px;">
+          <li style="padding:6px 0;">👉「もっと短くして」</li>
+          <li style="padding:6px 0;">👉「もう少しやわらかく」</li>
+          <li style="padding:6px 0;">👉「箇条書きにして」</li>
+          <li style="padding:6px 0;">👉「別のパターンで」</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- まとめ -->
+    <section class="section">
+      <span class="section-label">おさらい</span>
+      <h2>上巻でやったこと✅</h2>
+
+      <ul class="check-list">
+        <li>ChatGPTは「超優秀なアシスタント」と理解した</li>
+        <li>社長がどう使ってるか知った</li>
+        <li>初めての一言を送った</li>
+        <li>質問してみた</li>
+        <li>文章を作ってもらった</li>
+      </ul>
+
+      <div class="highlight">
+        <div class="emoji">🚀</div>
+        <h3>3回使えた！</h3>
+        <p>これであなたもChatGPTユーザー！<br>次は中巻でもっと使いこなそう！</p>
+      </div>
+    </section>
+
+    <!-- Complete Section -->
+    <section class="section complete">
+      <div class="emoji">🎉</div>
+      <h3>上巻クリア！</h3>
+      <p>おめでとう！🎊<br><br>ChatGPTに3回話しかけることができました！<br>次は好きなカテゴリを選んで練習しよう！</p>
+    </section>
+
+    <!-- Category Selection -->
+    <section class="section">
+      <span class="section-label">次のステップ</span>
+      <h2>どれを練習する？🎯</h2>
+      <p style="text-align:center; margin-bottom:24px; color:var(--gray);">興味があるものをクリック！<br>専用のレッスンページで練習できるよ！</p>
+
+      <div class="category-grid">
+        <a href="../lessons/writing.html" class="category-btn">
+          <span class="category-icon">📝</span>
+          <span class="category-name">文章作成</span>
+          <span class="category-desc">メール・報告書・お詫び文</span>
+        </a>
+
+        <a href="../lessons/sales-doc.html" class="category-btn">
+          <span class="category-icon">📊</span>
+          <span class="category-name">営業資料の作成</span>
+          <span class="category-desc">提案書・見積もり説明</span>
+        </a>
+
+        <a href="../lessons/sales-talk.html" class="category-btn">
+          <span class="category-icon">🗣️</span>
+          <span class="category-name">営業トーク</span>
+          <span class="category-desc">話す言葉・切り返し</span>
+        </a>
+
+        <a href="../lessons/decision.html" class="category-btn">
+          <span class="category-icon">🤔</span>
+          <span class="category-name">迷った時の相談</span>
+          <span class="category-desc">選択肢の整理・優先順位</span>
+        </a>
+
+        <a href="../lessons/sns.html" class="category-btn">
+          <span class="category-icon">📱</span>
+          <span class="category-name">SNS投稿の作成</span>
+          <span class="category-desc">Instagram・X・ハッシュタグ</span>
+        </a>
+
+        <a href="../lessons/idea.html" class="category-btn">
+          <span class="category-icon">💡</span>
+          <span class="category-name">アイデア出し</span>
+          <span class="category-desc">企画・ネーミング・コピー</span>
+        </a>
+
+        <a href="../lessons/research.html" class="category-btn">
+          <span class="category-icon">🔍</span>
+          <span class="category-name">調べもの</span>
+          <span class="category-desc">リサーチ・わからないこと</span>
+        </a>
+
+        <a href="../lessons/consulting.html" class="category-btn">
+          <span class="category-icon">🧠</span>
+          <span class="category-name">経営の相談</span>
+          <span class="category-desc">判断・意思決定の相談</span>
+        </a>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 16px; margin-top: 40px; flex-wrap: wrap;">
+        <a href="../vol2/index.html" style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 16px 36px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 17px; box-shadow: 0 8px 25px rgba(102,126,234,0.4); transition: all 0.3s;">📘 中巻へ進む →</a>
+      </div>
+      <a href="../index.html" style="display: block; text-align: center; margin-top: 20px; color: #636e72; text-decoration: none; font-size: 14px;">← 目次にもどる</a>
+    </section>
+
+  </main>
+
+  <!-- ChatGPT Float Button -->
+  <a href="https://chat.openai.com" target="_blank" class="chatgpt-float">
+    <span class="chatgpt-icon">💬</span>
+    <span class="chatgpt-text">ChatGPTを開く</span>
+  </a>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-logo">✨ ChatGPT 初心者編 ✨</div>
+    <p>ChatGPT 初心者編 上巻</p>
+  </footer>
+
+  <script>
+    // Scroll Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach(section => {
+      observer.observe(section);
+    });
+
+    // Copy Function
+    function copyText(btn) {
+      const text = btn.parentElement.querySelector('.copy-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ コピーしました！';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 コピーする';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

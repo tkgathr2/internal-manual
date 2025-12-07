@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下巻｜実践応用編</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --pink: #ff6b9d; --orange: #ff9f43; --yellow: #feca57; --green: #1dd1a1; --blue: #54a0ff; --purple: #a55eea; --dark: #2d3436; --gray: #636e72; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'M PLUS Rounded 1c', sans-serif; background: linear-gradient(180deg, #f0fff4 0%, #f0f9ff 50%, #fff5f8 100%); color: var(--dark); line-height: 1.9; font-size: 17px; }
+    
+    .hero { background: linear-gradient(135deg, var(--green), #0abde3); padding: 50px 20px 90px; text-align: center; position: relative; }
+    .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='3' fill='white' fill-opacity='0.15'/%3E%3C/svg%3E"); }
+    .hero-content { position: relative; z-index: 1; }
+    .badge { display: inline-block; background: white; color: var(--green); padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .hero-emoji { font-size: 70px; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(28px, 7vw, 44px); color: white; margin-bottom: 12px; font-weight: 800; text-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .hero p { color: white; opacity: 0.95; font-size: 18px; }
+    .volume { display: inline-block; background: white; color: var(--green); padding: 14px 32px; border-radius: 50px; font-weight: 800; font-size: 18px; margin-top: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+    
+    .wave { position: relative; margin-top: -50px; z-index: 2; }
+    .wave svg { display: block; width: 100%; height: auto; }
+    
+    .main { max-width: 700px; margin: 0 auto; padding: 20px 20px 60px; }
+    
+    .section { margin-bottom: 60px; opacity: 0; transform: translateY(40px); transition: all 0.6s ease-out; }
+    .section.visible { opacity: 1; transform: translateY(0); }
+    
+    .section-label { display: inline-block; background: linear-gradient(135deg, var(--green), #0abde3); color: white; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .section h2 { font-size: clamp(24px, 6vw, 32px); font-weight: 800; margin-bottom: 20px; line-height: 1.5; }
+    
+    .card { background: white; border-radius: 24px; padding: 28px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 2px solid transparent; }
+    .card-green { border-color: #d4edda; background: linear-gradient(135deg, #f0fff4, white); }
+    .card-blue { border-color: #d6eaff; background: linear-gradient(135deg, #f0f9ff, white); }
+    .card-purple { border-color: #e8daff; background: linear-gradient(135deg, #f8f5ff, white); }
+    .card-orange { border-color: #ffe8d6; background: linear-gradient(135deg, #fff8f0, white); }
+    .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .card h3 .emoji { font-size: 28px; }
+    
+    .highlight { background: linear-gradient(135deg, var(--green), #0abde3); border-radius: 20px; padding: 32px; text-align: center; color: white; margin: 24px 0; }
+    .highlight .emoji { font-size: 48px; margin-bottom: 12px; }
+    .highlight h3 { font-size: 22px; margin-bottom: 12px; }
+    .highlight p { font-size: 16px; opacity: 0.95; }
+    
+    /* 会話例 */
+    .conversation { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; padding: 24px; margin: 24px 0; color: white; }
+    .conversation h4 { font-size: 16px; margin-bottom: 20px; opacity: 0.9; display: flex; align-items: center; gap: 8px; }
+    .chat-bubble { background: rgba(255,255,255,0.15); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .chat-bubble:last-child { margin-bottom: 0; }
+    .chat-label { font-size: 12px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .chat-label.user { color: #feca57; }
+    .chat-label.ai { color: #1dd1a1; }
+    .chat-text { font-size: 15px; line-height: 1.8; }
+    .chat-bubble.highlight-bubble { background: rgba(29, 209, 161, 0.3); border: 2px solid rgba(29, 209, 161, 0.5); }
+    
+    /* レッスンボックス */
+    .lesson-box { background: linear-gradient(135deg, var(--green), #0abde3); border-radius: 20px; padding: 28px; margin: 24px 0; color: white; }
+    .lesson-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .lesson-badge { background: rgba(255,255,255,0.25); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 700; }
+    .lesson-title { font-size: 18px; font-weight: 700; }
+    .copy-area { background: rgba(255,255,255,0.95); border-radius: 12px; padding: 20px; margin: 16px 0; }
+    .copy-text { color: var(--dark); font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+    .copy-btn { background: white; color: var(--green); border: none; padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+    .copy-btn:hover { transform: scale(1.05); }
+    .copy-btn.copied { background: var(--purple); color: white; }
+    
+    /* フレーズリスト */
+    .phrase-list { list-style: none; margin: 16px 0; }
+    .phrase-list li { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 18px; margin: 10px 0; font-size: 15px; }
+    .phrase-list li strong { color: #feca57; }
+    
+    /* 使い分けカード */
+    .use-case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+    .use-case { background: white; border-radius: 16px; padding: 20px; text-align: center; border: 2px solid #e9ecef; }
+    .use-case .emoji { font-size: 36px; margin-bottom: 8px; }
+    .use-case h5 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .use-case p { font-size: 13px; color: var(--gray); }
+    
+    /* 注意点 */
+    .warning { background: #fff5f5; border-radius: 20px; padding: 24px; margin: 24px 0; border: 2px solid #ffe0e0; }
+    .warning h4 { color: #e74c3c; font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .warning-list { list-style: none; }
+    .warning-list li { padding: 10px 0; font-size: 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px dashed #ffe0e0; }
+    .warning-list li:last-child { border-bottom: none; }
+    .warning-list li .num { background: #e74c3c; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    
+    /* チェックリスト */
+    .check-list { list-style: none; background: white; border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .check-list li { padding: 12px 0; border-bottom: 1px dashed #e9ecef; font-size: 16px; display: flex; align-items: center; gap: 12px; }
+    .check-list li:last-child { border-bottom: none; }
+    .check-list li::before { content: '✅'; font-size: 20px; }
+    
+    /* ナビゲーション */
+    .nav-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .nav-btn { display: inline-block; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+    .nav-btn.prev { background: #e9ecef; color: var(--dark); }
+    .nav-btn.next { background: linear-gradient(135deg, var(--pink), var(--orange)); color: white; box-shadow: 0 8px 30px rgba(255,107,157,0.3); }
+    .nav-btn:hover { transform: translateY(-3px); }
+    .back-link { display: block; text-align: center; margin-top: 20px; color: var(--gray); text-decoration: none; font-size: 14px; }
+    
+    .chatgpt-float { position: fixed; bottom: 24px; right: 24px; background: linear-gradient(135deg, #10a37f, #1a7f64); color: white; padding: 14px 24px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 30px rgba(16, 163, 127, 0.4); transition: all 0.3s; z-index: 1000; }
+    .chatgpt-float:hover { transform: translateY(-4px); }
+    
+    .footer { background: linear-gradient(135deg, var(--green), #0abde3); color: white; text-align: center; padding: 40px 20px; }
+    .footer-logo { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    
+    @media (max-width: 500px) { .use-case-grid { grid-template-columns: 1fr; } .nav-buttons { flex-direction: column; } .nav-btn { width: 100%; text-align: center; } .chatgpt-float { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 14px; } }
+  </style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-content">
+    <span class="badge">📚 ChatGPT 初心者編</span>
+    <div class="hero-emoji">🚀</div>
+    <h1>実践応用編</h1>
+    <p>ChatGPTを「相棒」にする</p>
+    <div class="volume">下巻</div>
+  </div>
+</header>
+<div class="wave"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,60 C300,120 600,0 1200,60 L1200,120 L0,120 Z" fill="#f0fff4"/></svg></div>
+
+<main class="main">
+
+  <!-- ゴール -->
+  <section class="section">
+    <span class="section-label">下巻のゴール</span>
+    <h2>ChatGPTを<br>「相棒」にする🤝</h2>
+    <div class="card card-green">
+      <h3><span class="emoji">💡</span> 上巻・中巻との違い</h3>
+      <p>上巻・中巻では「1回のやりとり」がメインでした。<br><br>下巻では<strong>会話を続けて深掘りする</strong>テクニックを学びます！</p>
+    </div>
+    <div class="highlight">
+      <div class="emoji">🎯</div>
+      <h3>目指すゴール</h3>
+      <p>「ちょっと相談したい時」に<br>いつでも頼れる相棒になる！</p>
+    </div>
+  </section>
+
+  <!-- テク①：深掘りする -->
+  <section class="section">
+    <span class="section-label">テクニック①</span>
+    <h2>会話を続けて深掘りする🔍</h2>
+    <div class="card card-blue">
+      <h3><span class="emoji">💬</span> 1回で終わらせない！</h3>
+      <p>最初の回答は「入口」にすぎません。<br><br>そこから「もっと詳しく」「うちの場合は？」と掘り下げていくと、本当に使えるアドバイスが出てきます！</p>
+    </div>
+    
+    <div class="conversation">
+      <h4>📱 実際のやりとり例</h4>
+      <div class="chat-bubble">
+        <div class="chat-label user">👤 あなた（1回目）</div>
+        <div class="chat-text">売上を上げる方法を教えて</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">売上を上げるには、新規顧客の獲得、既存顧客のリピート率向上、客単価アップなどの方法があります…（一般的な回答）</div>
+      </div>
+      <div class="chat-bubble highlight-bubble">
+        <div class="chat-label user">👤 あなた（2回目）ここがポイント！</div>
+        <div class="chat-text">うちは従業員5人の〇〇業で、リピーターは多いけど新規が少ないんだよね</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">なるほど、〇〇業で新規獲得が課題なんですね。その業界で効果的なのは…（業界特化のアドバイス）</div>
+      </div>
+      <div class="chat-bubble highlight-bubble">
+        <div class="chat-label user">👤 あなた（3回目）さらに深掘り！</div>
+        <div class="chat-text">その中の②が気になる。具体的にどうやればいい？</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">②を実行するなら、まず〇〇から始めて…（具体的な手順）</div>
+      </div>
+    </div>
+
+    <div class="card card-orange">
+      <h3><span class="emoji">🗣️</span> 深掘りに使えるフレーズ</h3>
+      <ul class="phrase-list">
+        <li>「その中で<strong>②をもっと詳しく</strong>」</li>
+        <li>「<strong>うちの場合</strong>、〇〇なんだけど」</li>
+        <li>「それを<strong>実行するステップ</strong>は？」</li>
+        <li>「<strong>最初の一歩</strong>は何をすればいい？」</li>
+        <li>「<strong>予算〇万円</strong>でできることは？」</li>
+      </ul>
+    </div>
+
+    <div class="lesson-box">
+      <div class="lesson-header">
+        <span class="lesson-badge">✏️ やってみよう</span>
+        <span class="lesson-title">3回以上やりとりする</span>
+      </div>
+      <p>まずこれを送って、3回以上会話を続けてみよう！</p>
+      <div class="copy-area">
+        <div class="copy-text">集客を増やしたいんだけど、どんな方法がある？</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+      <p style="margin-top:16px; font-size:14px; opacity:0.9;">↓ 回答が来たら、自分の状況を伝えて深掘り！</p>
+    </div>
+  </section>
+
+  <!-- テク②：壁打ち相手 -->
+  <section class="section">
+    <span class="section-label">テクニック②</span>
+    <h2>壁打ち相手にする🎾</h2>
+    <div class="card card-purple">
+      <h3><span class="emoji">🤔</span> 考えを整理したい時に！</h3>
+      <p>頭の中がモヤモヤしている時、人に話すと整理されますよね？<br><br>ChatGPTはいつでも付き合ってくれる「壁打ち相手」になります！</p>
+    </div>
+
+    <div class="conversation">
+      <h4>📱 壁打ちのやりとり例</h4>
+      <div class="chat-bubble highlight-bubble">
+        <div class="chat-label user">👤 最初にこう宣言する</div>
+        <div class="chat-text">今から考えを話すので、整理を手伝ってほしい。途中で質問してくれると助かる。</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">もちろんです！お話を聞いて、整理のお手伝いをしますね。どうぞ話してください。</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label user">👤 あなた</div>
+        <div class="chat-text">新しいサービスを始めようと思ってて、でもタイミングが今でいいのかわからなくて…</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">なるほど。タイミングに迷いがあるんですね。ちなみに「今じゃない」と思う理由は何ですか？</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label user">👤 あなた</div>
+        <div class="chat-text">うーん、人手が足りないかなって…</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">人手の問題ですね。では「今やる」メリットは何かありますか？</div>
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h3><span class="emoji">✨</span> 壁打ちで使えるフレーズ</h3>
+      <ul class="phrase-list">
+        <li>「<strong>考えを整理したい</strong>ので聞いてほしい」</li>
+        <li>「<strong>途中で質問して</strong>くれると助かる」</li>
+        <li>「<strong>矛盾があったら指摘</strong>して」</li>
+        <li>「最後に<strong>ポイントをまとめて</strong>」</li>
+        <li>「私が<strong>見落としてること</strong>ある？」</li>
+      </ul>
+    </div>
+
+    <div class="lesson-box">
+      <div class="lesson-header">
+        <span class="lesson-badge">✏️ やってみよう</span>
+        <span class="lesson-title">壁打ちを体験する</span>
+      </div>
+      <div class="copy-area">
+        <div class="copy-text">今から仕事の悩みを話すので、整理を手伝ってほしい。
+途中で質問しながら聞いてくれると助かる。
+最後にポイントをまとめてほしい。
+
+準備できたら「どうぞ」と言って。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+    </div>
+  </section>
+
+  <!-- テク③：複数視点 -->
+  <section class="section">
+    <span class="section-label">テクニック③</span>
+    <h2>複数の視点で検討する👥</h2>
+    <div class="card card-blue">
+      <h3><span class="emoji">🎭</span> 一人で会議ができる！</h3>
+      <p>大事な判断をする時、いろんな立場の意見を聞きたいですよね？<br><br>ChatGPTに「複数の視点」から意見を出してもらえば、一人で多角的に検討できます！</p>
+    </div>
+
+    <div class="use-case-grid">
+      <div class="use-case">
+        <div class="emoji">👍👎</div>
+        <h5>賛成派・反対派</h5>
+        <p>両方の意見を出してもらう</p>
+      </div>
+      <div class="use-case">
+        <div class="emoji">👔👷</div>
+        <h5>経営者・従業員</h5>
+        <p>立場の違う視点で考える</p>
+      </div>
+      <div class="use-case">
+        <div class="emoji">😊😟</div>
+        <h5>楽観・慎重</h5>
+        <p>リスクと機会の両面を見る</p>
+      </div>
+      <div class="use-case">
+        <div class="emoji">🏠🌍</div>
+        <h5>短期・長期</h5>
+        <p>今と将来の両方で考える</p>
+      </div>
+    </div>
+
+    <div class="conversation">
+      <h4>📱 複数視点のやりとり例</h4>
+      <div class="chat-bubble">
+        <div class="chat-label user">👤 あなた</div>
+        <div class="chat-text">新しい設備を導入するか迷ってる。500万円くらいかかるんだけど。</div>
+      </div>
+      <div class="chat-bubble highlight-bubble">
+        <div class="chat-label user">👤 こう頼む！</div>
+        <div class="chat-text">この投資について、賛成派と反対派の両方の立場から意見を出して。それぞれ3つずつ理由もつけて。</div>
+      </div>
+      <div class="chat-bubble">
+        <div class="chat-label ai">🤖 ChatGPT</div>
+        <div class="chat-text">【賛成派の意見】①長期的なコスト削減…②競合との差別化…③従業員の負担軽減…<br><br>【反対派の意見】①初期投資の回収リスク…②現状でも回っている…③他の優先事項…</div>
+      </div>
+    </div>
+
+    <div class="card card-orange">
+      <h3><span class="emoji">🗣️</span> 複数視点で使えるフレーズ</h3>
+      <ul class="phrase-list">
+        <li>「<strong>賛成と反対</strong>、両方の意見を出して」</li>
+        <li>「<strong>経営者目線と従業員目線</strong>で考えて」</li>
+        <li>「<strong>メリット・デメリット・リスク</strong>を整理して」</li>
+        <li>「<strong>短期的と長期的</strong>、両方の影響は？」</li>
+        <li>「<strong>お客様の立場</strong>から見るとどう？」</li>
+      </ul>
+    </div>
+
+    <div class="lesson-box">
+      <div class="lesson-header">
+        <span class="lesson-badge">✏️ やってみよう</span>
+        <span class="lesson-title">複数視点で検討する</span>
+      </div>
+      <div class="copy-area">
+        <div class="copy-text">新しいスタッフを1人採用するか迷っています。
+
+この判断について、
+・賛成派の意見（3つ）
+・反対派の意見（3つ）
+・判断する時のポイント
+
+を整理して教えてください。</div>
+      </div>
+      <button class="copy-btn" onclick="copyText(this)">📋 コピーする</button>
+    </div>
+  </section>
+
+  <!-- 注意点 -->
+  <section class="section">
+    <span class="section-label">大事なこと</span>
+    <h2>これだけは守ってね⚠️</h2>
+    <div class="warning">
+      <h4>🔒 3つのルール</h4>
+      <ul class="warning-list">
+        <li><span class="num">1</span>お客様の名前・電話番号は入れない</li>
+        <li><span class="num">2</span>大事な内容は送る前に必ず確認</li>
+        <li><span class="num">3</span>最終判断は自分でする</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h3><span class="emoji">💡</span> ChatGPTは「相談相手」</h3>
+      <p>アドバイスはくれるけど、決めるのはあなた！<br><br>「こういう考え方もあるな」くらいの気持ちで使うのがちょうどいい。</p>
+    </div>
+  </section>
+
+  <!-- おさらい -->
+  <section class="section">
+    <span class="section-label">おさらい</span>
+    <h2>下巻でやったこと✅</h2>
+    <ul class="check-list">
+      <li>会話を続けて深掘りする</li>
+      <li>壁打ち相手として使う</li>
+      <li>複数の視点で検討する</li>
+    </ul>
+    <div class="highlight">
+      <div class="emoji">🎉</div>
+      <h3>おめでとう！</h3>
+      <p>これであなたも<br>ChatGPTマスター！</p>
+    </div>
+  </section>
+
+  <!-- ナビゲーション -->
+  <section class="section">
+    <div class="nav-buttons">
+      <a href="../vol2/index.html" class="nav-btn prev">← 中巻に戻る</a>
+      <a href="../lessons/writing.html" class="nav-btn next">📝 練習レッスンへ →</a>
+    </div>
+    <a href="../index.html" class="back-link">← 目次に戻る</a>
+  </section>
+
+</main>
+
+<a href="https://chat.openai.com" target="_blank" class="chatgpt-float">
+  <span>💬</span>
+  <span>ChatGPTを開く</span>
+</a>
+
+<footer class="footer">
+  <div class="footer-logo">✨ ChatGPT 初心者編 ✨</div>
+  <p>下巻：実践応用編</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.section').forEach(section => observer.observe(section));
+  
+  function copyText(btn) {
+    const text = btn.parentElement.querySelector('.copy-text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✅ コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 コピーする'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
