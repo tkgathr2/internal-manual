@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takagi Flow 完全版ドキュメント</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #ec4899; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header {
+            text-align: center; margin-bottom: 40px;
+            padding-bottom: 30px; border-bottom: 2px solid #ec4899;
+        }
+        .header h1 { font-size: 2rem; color: #f472b6; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 1rem; }
+        .header-meta { margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .meta-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .meta-advanced { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+        .meta-date { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.4rem; color: #f472b6; margin-bottom: 20px;
+            padding-left: 15px; border-left: 4px solid #ec4899;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .card h3 { color: #f1f5f9; margin-bottom: 15px; font-size: 1.15rem; }
+        .card p { color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 25px; color: #cbd5e1; line-height: 2; }
+        
+        /* 4本柱 */
+        .pillars {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) { .pillars { grid-template-columns: 1fr; } }
+        .pillar {
+            background: rgba(236, 72, 153, 0.1);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .pillar-num {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #ec4899; color: #fff; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px; font-size: 1.2rem;
+        }
+        .pillar h4 { color: #f472b6; margin-bottom: 8px; }
+        .pillar p { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+        
+        /* AI役割分担 */
+        .ai-roles {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) { .ai-roles { grid-template-columns: 1fr; } }
+        .ai-role {
+            border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .ai-role.chatgpt {
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+        }
+        .ai-role.chatgpt h4 { color: #34d399; }
+        .ai-role.claudecode {
+            background: rgba(139, 92, 246, 0.15);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+        }
+        .ai-role.claudecode h4 { color: #a78bfa; }
+        .ai-role.claude {
+            background: rgba(251, 191, 36, 0.15);
+            border: 2px solid rgba(251, 191, 36, 0.4);
+        }
+        .ai-role.claude h4 { color: #fbbf24; }
+        .ai-role h4 { margin-bottom: 5px; font-size: 1rem; }
+        .ai-role .role-type { font-size: 0.85rem; margin-bottom: 10px; }
+        .ai-role ul { text-align: left; margin-left: 15px; color: #94a3b8; font-size: 0.85rem; }
+        
+        /* AI三段構えフロー */
+        .ai-flow {
+            background: rgba(236, 72, 153, 0.1);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 16px; padding: 25px; margin: 20px 0;
+        }
+        .ai-flow h4 { color: #f472b6; text-align: center; margin-bottom: 20px; }
+        .flow-steps {
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .flow-step {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 12px 15px; border-radius: 8px;
+        }
+        .flow-step-num {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: #ec4899; color: #fff; font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .flow-step-text { color: #cbd5e1; font-size: 0.9rem; }
+        
+        /* 禁止・許可 */
+        .rules-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin: 15px 0;
+        }
+        @media (max-width: 768px) { .rules-grid { grid-template-columns: 1fr; } }
+        .rule-box {
+            border-radius: 10px; padding: 15px;
+        }
+        .rule-box.forbidden {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .rule-box.forbidden h5 { color: #f87171; }
+        .rule-box.allowed {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .rule-box.allowed h5 { color: #34d399; }
+        .rule-box ul { margin-left: 20px; margin-top: 10px; color: #94a3b8; font-size: 0.9rem; }
+        
+        /* フェーズ図 */
+        .phase-flow {
+            display: flex; justify-content: center; gap: 10px;
+            margin: 20px 0; flex-wrap: wrap;
+        }
+        .phase-box {
+            padding: 12px 18px; border-radius: 8px;
+            text-align: center; font-size: 0.85rem;
+        }
+        .p0 { background: rgba(100, 116, 139, 0.3); color: #94a3b8; }
+        .p1 { background: rgba(59, 130, 246, 0.3); color: #60a5fa; }
+        .p2 { background: rgba(20, 184, 166, 0.3); color: #2dd4bf; }
+        .p3 { background: rgba(16, 185, 129, 0.3); color: #34d399; }
+        .phase-arrow { color: #f472b6; font-size: 1.2rem; display: flex; align-items: center; }
+        
+        /* プロンプトセクション */
+        .prompt-section {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(219, 39, 119, 0.15));
+            border: 2px solid rgba(236, 72, 153, 0.5);
+            border-radius: 16px; padding: 30px; margin: 30px 0;
+        }
+        .prompt-section h2 {
+            color: #f472b6; font-size: 1.3rem; margin-bottom: 20px; text-align: center;
+        }
+        .prompt-instructions {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        .prompt-instructions ol { color: #cbd5e1; margin-left: 20px; line-height: 2; }
+        .prompt-instructions strong { color: #f472b6; }
+        .prompt-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 20px;
+            max-height: 500px; overflow-y: auto; margin-bottom: 20px;
+        }
+        .prompt-box pre {
+            color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.72rem; white-space: pre-wrap; word-wrap: break-word; line-height: 1.5;
+        }
+        .copy-btn {
+            display: block; width: 100%; padding: 15px 30px;
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .highlight-box h4 { color: #34d399; margin-bottom: 10px; }
+        
+        .warning-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .warning-box h4 { color: #fbbf24; margin-bottom: 10px; }
+        
+        .danger-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .danger-box h4 { color: #f87171; margin-bottom: 10px; }
+        
+        .summary-list {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+            margin: 15px 0;
+        }
+        @media (max-width: 768px) { .summary-list { grid-template-columns: 1fr; } }
+        .summary-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155;
+            border-radius: 8px; padding: 12px 15px;
+            color: #cbd5e1; font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        .footer a { color: #f472b6; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html">全体マップ</a>
+        <a href="vol1.html">上巻</a>
+        <a href="claude.html">ClaudeCode</a>
+        <a href="vol2.html">中巻</a>
+        <a href="vol3.html">下巻</a>
+        <a href="claude-dev.html" class="current">開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Takagi Flow 完全版ドキュメント</h1>
+            <p>ミスゼロ・再現性100%の業務自動化フレームワーク</p>
+            <div class="header-meta">
+                <span class="meta-badge meta-advanced">上級者向け</span>
+                <span class="meta-badge meta-date">最終更新：2025年12月07日</span>
+            </div>
+        </div>
+
+        <!-- 第1章：目的 -->
+        <div class="section">
+            <h2 class="section-title">第1章：Takagi Flow の目的</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>ミスゼロ・再現性100%</strong>の業務自動化を実現する共通フレームワーク</li>
+                    <li>AI（ChatGPT・Claude・ClaudeCode・n8n・Notion）を組み合わせ、<strong>1人で10人分働ける仕組み</strong>を作る</li>
+                    <li><strong>属人化を排除</strong>し、誰が見ても引き継げる作業体系を標準化</li>
+                    <li>問題が起きても<strong>AI同士が連携し「必ず成功まで辿り着ける」</strong>仕組みをつくる</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第2章：4本柱 -->
+        <div class="section">
+            <h2 class="section-title">第2章：Takagi Flow の4本柱（最重要基盤）</h2>
+            
+            <div class="pillars">
+                <div class="pillar">
+                    <div class="pillar-num">1</div>
+                    <h4>フェーズ制（Phase管理）</h4>
+                    <p>S-0 → S-1 → S-2 → S-3<br>失敗したら必ず1つ前へ戻る</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-num">2</div>
+                    <h4>成功条件チェック</h4>
+                    <p>フェーズごとに1〜3の成功条件<br>人間の目で確認したら次へ</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-num">3</div>
+                    <h4>チェックポイント方式</h4>
+                    <p>CHECKPOINT_xxx を作成<br>問題時に確実にロールバック</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-num">4</div>
+                    <h4>ログ管理（logフォルダ）</h4>
+                    <p>log フォルダ内に debug ファイル作成<br>日付ごとに蓄積</p>
+                </div>
+            </div>
+            
+            <div class="phase-flow">
+                <div class="phase-box p0">Phase S-0<br>環境確認</div>
+                <div class="phase-arrow">→</div>
+                <div class="phase-box p1">Phase S-1<br>単体テスト</div>
+                <div class="phase-arrow">→</div>
+                <div class="phase-box p2">Phase S-2<br>部分実行</div>
+                <div class="phase-arrow">→</div>
+                <div class="phase-box p3">Phase S-3<br>本番実行</div>
+            </div>
+        </div>
+
+        <!-- 第3章：AIツールの役割分担 -->
+        <div class="section">
+            <h2 class="section-title">第3章：AIツールの役割分担（Takagi Flowの心臓）</h2>
+            
+            <div class="ai-roles">
+                <div class="ai-role chatgpt">
+                    <h4>ChatGPT</h4>
+                    <div class="role-type">司令塔AI（設計・判断・管理）</div>
+                    <ul>
+                        <li>要件整理・全体設計</li>
+                        <li>フェーズ構造を作る</li>
+                        <li>指示書（Canvas）作成</li>
+                        <li>Claude と ClaudeCode の監督</li>
+                        <li>問題時の相談文作成</li>
+                    </ul>
+                </div>
+                <div class="ai-role claudecode">
+                    <h4>ClaudeCode</h4>
+                    <div class="role-type">実行AI（手足として動く）</div>
+                    <ul>
+                        <li>Python実行</li>
+                        <li>ファイル操作・Excel処理</li>
+                        <li>EXE化テスト</li>
+                        <li>手作業の自動化</li>
+                    </ul>
+                </div>
+                <div class="ai-role claude">
+                    <h4>Claude（会話AI）</h4>
+                    <div class="role-type">参謀AI（問題解決専門）</div>
+                    <ul>
+                        <li>原因分析</li>
+                        <li>改善提案</li>
+                        <li>修正方針提供</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第4章：AI三段構え -->
+        <div class="section">
+            <h2 class="section-title">第4章：AI三段構えの自動復旧ループ（最重要追加ルール）</h2>
+            
+            <div class="danger-box">
+                <h4>追加ルール（2025/12/07 更新）</h4>
+                <p style="color: #cbd5e1;">ClaudeCode が同じ箇所で <strong>2回以上連続停止</strong>した場合、ChatGPT が Claude に相談文を作成して送信し、Claude の改善案を取り込み、ChatGPT が改良指示を再生成して ClaudeCode に再実行させる。</p>
+            </div>
+            
+            <div class="ai-flow">
+                <h4>AIリレー方式の流れ</h4>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-step-num">1</div>
+                        <div class="flow-step-text">ChatGPT → ClaudeCode：指示を出して実行</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">2</div>
+                        <div class="flow-step-text">ClaudeCode が同じエラーで2回止まる</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">3</div>
+                        <div class="flow-step-text">ChatGPT が状況を整理し Claude へ相談文送信</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">4</div>
+                        <div class="flow-step-text">Claude が分析・改善案を返す</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">5</div>
+                        <div class="flow-step-text">ChatGPT が改善案を元に指示書を作り直す</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-num">6</div>
+                        <div class="flow-step-text">ChatGPT → ClaudeCode：改良指示で再実行</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>目的</h3>
+                <ul>
+                    <li>AIの詰まりを自動で脱出</li>
+                    <li>無限ループ防止</li>
+                    <li>開発が止まらない仕組みを保証</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第5章：Canvasルール -->
+        <div class="section">
+            <h2 class="section-title">第5章：Canvasルール（Takagi Flowの土台）</h2>
+            <div class="card">
+                <ul>
+                    <li>長文指示・コード・設計は必ず <strong>Canvas に保存</strong>する</li>
+                    <li>Canvas名は <strong>指示書001 → 指示書002…</strong> と連番で管理</li>
+                    <li>ChatGPT のチャット側には要点のみを提示し、本文は Canvas に置く</li>
+                    <li>ClaudeCode への作業依頼は必ず <strong>Canvas ベース</strong>で行う</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第6章：開発環境ルール -->
+        <div class="section">
+            <h2 class="section-title">第6章：開発環境ルール（フォルダ・パス・構成）</h2>
+            <div class="card">
+                <h3>開発と本番は厳密に分離</h3>
+                <ul>
+                    <li><strong>00_開発</strong>：作業用</li>
+                    <li><strong>本番フォルダ</strong>：完成品のみ配置</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>EXEは「99_アプリ」フォルダに1つだけ</h3>
+                <p>複製・増殖禁止。</p>
+            </div>
+            <div class="card">
+                <h3>パス提示は必ず「1行のコードブロック形式」</h3>
+                <code style="display: block; background: #0f172a; padding: 15px; border-radius: 8px; color: #a78bfa; margin-top: 10px;">C:\Users\xxxx\Dropbox\takagi atsuhiro\00_開発\警備業務の内容転載アプリ</code>
+            </div>
+        </div>
+
+        <!-- 第7章：コード内禁止事項 -->
+        <div class="section">
+            <h2 class="section-title">第7章：コード内禁止事項（Takagi Flow厳格ルール）</h2>
+            
+            <div class="rules-grid">
+                <div class="rule-box forbidden">
+                    <h5>禁止</h5>
+                    <ul>
+                        <li>絵文字</li>
+                        <li>[SUCCESS] / [ERROR] などの記号ラベル</li>
+                        <li>★・◎などの装飾記号</li>
+                        <li>特殊文字による強調</li>
+                    </ul>
+                </div>
+                <div class="rule-box allowed">
+                    <h5>許可</h5>
+                    <ul>
+                        <li>純粋な日本語</li>
+                        <li>英数字のみのテキスト</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第8章：画像の扱い -->
+        <div class="section">
+            <h2 class="section-title">第8章：画像の扱い（最優先）</h2>
+            
+            <div class="danger-box">
+                <h4>画像が壊れる・欠損する問題があれば最優先で解決</h4>
+                <p style="color: #cbd5e1;">他の作業より優先して対応すること。</p>
+            </div>
+            
+            <div class="card">
+                <h3>EXE化時の注意</h3>
+                <ul>
+                    <li><strong>日本語パス禁止</strong></li>
+                    <li>外部辞書は spec に明示的同梱</li>
+                    <li>画像チェックは最優先フェーズとして扱う</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第9章：PDCA内蔵ルール -->
+        <div class="section">
+            <h2 class="section-title">第9章：ClaudeCode指示書のPDCA内蔵ルール</h2>
+            <div class="card">
+                <p>ChatGPTが作成する全指示書は <strong>PDCAを必ず含む</strong>。</p>
+                <ul style="margin-top: 15px;">
+                    <li><strong>Plan</strong>（計画）</li>
+                    <li><strong>Do</strong>（実行）</li>
+                    <li><strong>Check</strong>（検証）</li>
+                    <li><strong>Act</strong>（改善→再実行）</li>
+                </ul>
+                <p style="margin-top: 15px;">失敗したら必ず Plan に戻る。</p>
+            </div>
+        </div>
+
+        <!-- 第10章：完了条件 -->
+        <div class="section">
+            <h2 class="section-title">第10章：完了条件（「動いた」ではなく「成果」）</h2>
+            
+            <div class="highlight-box">
+                <h4>完了 = 成果が正しく出て、人間が確認できた状態</h4>
+            </div>
+            
+            <div class="card">
+                <h3>完了の例</h3>
+                <ul>
+                    <li>必要件数（例：24件）が正しく出力されている</li>
+                    <li>書式・画像が崩れていない</li>
+                    <li>エラー0件</li>
+                    <li>本番フォルダへ正しく配置</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第11章：全体プロセス -->
+        <div class="section">
+            <h2 class="section-title">第11章：Takagi Flow 全体プロセス</h2>
+            <div class="card">
+                <ol>
+                    <li><strong>設計</strong>（ChatGPT）</li>
+                    <li><strong>Canvas指示書化</strong></li>
+                    <li><strong>ClaudeCode 実行</strong>（フェーズ制）</li>
+                    <li><strong>ChatGPT 検証</strong> → ログ作成</li>
+                    <li><strong>問題時：Claude が介入</strong>（AI三段構え）</li>
+                    <li><strong>成功条件クリアで次フェーズへ</strong></li>
+                    <li><strong>完成後、本番反映</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 第12章：最終要約 -->
+        <div class="section">
+            <h2 class="section-title">第12章：Takagi Flow 最終要約</h2>
+            
+            <div class="summary-list">
+                <div class="summary-item">フェーズ制</div>
+                <div class="summary-item">成功条件チェック</div>
+                <div class="summary-item">チェックポイント</div>
+                <div class="summary-item">debugログ（logフォルダ管理）</div>
+                <div class="summary-item">Canvas管理</div>
+                <div class="summary-item">AI三段構え（ChatGPT ⇄ Claude ⇄ ClaudeCode）</div>
+                <div class="summary-item">絵文字・装飾禁止</div>
+                <div class="summary-item">日本語パス禁止</div>
+                <div class="summary-item">完了条件＝成果の確認</div>
+                <div class="summary-item">画像問題は最優先</div>
+            </div>
+        </div>
+
+        <!-- 深層プロトコル -->
+        <div class="prompt-section">
+            <h2>Claudeに貼り付ける深層プロトコル</h2>
+            
+            <div class="prompt-instructions">
+                <ol>
+                    <li><strong>Claude</strong>（ChatGPTではない）で新しいチャットを開く</li>
+                    <li>下の「コピー」ボタンをクリック</li>
+                    <li>Claudeに貼り付けて <strong>Enter</strong></li>
+                    <li>「ロードしました」と返答されたら、開発開始！</li>
+                </ol>
+            </div>
+            
+            <div class="prompt-box">
+                <pre id="prompt-text">============================================================
+Takagi Flow 深層プロトコル v3.0（2025年12月07日版）
+============================================================
+
+あなたはこれから「Takagi Flow」に完全準拠した開発AIとして動作します。
+以下のルールをすべて記憶し、厳守してください。
+
+============================================================
+第1章：Takagi Flow の目的
+============================================================
+- ミスゼロ・再現性100%の業務自動化を実現する共通フレームワーク
+- AI（ChatGPT・Claude・ClaudeCode・n8n・Notion）を組み合わせ、1人で10人分働ける仕組みを作る
+- 属人化を排除し、誰が見ても引き継げる作業体系を標準化
+- 問題が起きてもAI同士が連携し「必ず成功まで辿り着ける」仕組みをつくる
+
+============================================================
+第2章：Takagi Flow の4本柱（最重要基盤）
+============================================================
+
+【柱1】フェーズ制（Phase管理）
+- Phase S-0：環境確認
+- Phase S-1：単体テスト
+- Phase S-2：部分実行
+- Phase S-3：本番実行
+- 失敗したら必ず1つ前のフェーズへ戻る
+
+【柱2】成功条件チェック（Success Criteria）
+- フェーズごとに1〜3の成功条件を設定
+- 人間の目で成功を確認したときのみ次へ進む
+
+【柱3】チェックポイント方式（CHECKPOINT管理）
+- 重要地点ごとにCHECKPOINT_xxxを作成
+- 問題時はその地点へ確実にロールバックできる
+
+【柱4】ログ管理（logフォルダでのdebug管理）
+- 各フェーズの終わりにlogフォルダ内にdebugファイルを作成し管理する
+- logフォルダに格納するdebugファイルは、シンプルな文章で「行ったこと・結果・気づき」を記録
+- 日付ごとに蓄積される
+
+============================================================
+第3章：AIツールの役割分担（Takagi Flowの心臓）
+============================================================
+
+【ChatGPT = 司令塔AI（設計・判断・管理）】
+- 要件整理・全体設計
+- フェーズ構造を作る
+- 指示書（Canvas）作成
+- Claude と ClaudeCode の監督
+- 問題時の相談文作成
+
+【ClaudeCode = 実行AI（手足として動く）】
+- Python実行
+- ファイル操作・Excel処理
+- EXE化テスト
+- 手作業の自動化
+
+【Claude（会話AI）= 参謀AI（問題解決専門）】
+- 原因分析
+- 改善提案
+- 修正方針提供
+
+============================================================
+第4章：AI三段構えの自動復旧ループ（最重要追加ルール）
+============================================================
+
+【追加ルール】2025/12/07更新
+ClaudeCode が同じ箇所で2回以上連続停止した場合、
+ChatGPT が Claude に相談文を作成して送信し、
+Claude の改善案を取り込み、
+ChatGPT が改良指示を再生成して ClaudeCode に再実行させる。
+
+【AIリレー方式の流れ】
+1. ChatGPT → ClaudeCode：指示を出して実行
+2. ClaudeCode が同じエラーで2回止まる
+3. ChatGPT が状況を整理し Claude へ相談文送信
+4. Claude が分析・改善案を返す
+5. ChatGPT が改善案を元に指示書を作り直す
+6. ChatGPT → ClaudeCode：改良指示で再実行
+
+【目的】
+- AIの詰まりを自動で脱出
+- 無限ループ防止
+- 開発が止まらない仕組みを保証
+
+============================================================
+第5章：Canvasルール（Takagi Flowの土台）
+============================================================
+- 長文指示・コード・設計は必ずCanvasに保存する
+- Canvas名は 指示書001 → 指示書002… と連番で管理
+- ChatGPT のチャット側には要点のみを提示し、本文はCanvasに置く
+- ClaudeCode への作業依頼は必ずCanvasベースで行う
+
+============================================================
+第6章：開発環境ルール（フォルダ・パス・構成）
+============================================================
+- 開発と本番は厳密に分離
+  - 00_開発：作業用
+  - 本番フォルダ：完成品のみ配置
+- EXEは「99_アプリ」フォルダに1つだけ（複製・増殖禁止）
+- パス提示は必ず「1行のコードブロック形式」
+
+============================================================
+第7章：コード内禁止事項（Takagi Flow厳格ルール）
+============================================================
+
+【禁止】
+- 絵文字
+- [SUCCESS] / [ERROR] などの記号ラベル
+- ★・◎などの装飾記号
+- 特殊文字による強調
+
+【許可】
+- 純粋な日本語または英数字のみのテキスト
+
+============================================================
+第8章：画像の扱い（最優先）
+============================================================
+- 画像が壊れる・欠損する問題があれば最優先で解決
+- EXE化時の注意：
+  - 日本語パス禁止
+  - 外部辞書はspecに明示的同梱
+- 画像チェックは最優先フェーズとして扱う
+
+============================================================
+第9章：ClaudeCode指示書のPDCA内蔵ルール
+============================================================
+ChatGPTが作成する全指示書はPDCAを必ず含む。
+- Plan（計画）
+- Do（実行）
+- Check（検証）
+- Act（改善→再実行）
+
+失敗したら必ずPlanに戻る。
+
+============================================================
+第10章：完了条件（「動いた」ではなく「成果」）
+============================================================
+完了 = 成果が正しく出て、人間が確認できた状態。
+
+例：
+- 必要件数（例：24件）が正しく出力されている
+- 書式・画像が崩れていない
+- エラー0件
+- 本番フォルダへ正しく配置
+
+============================================================
+第11章：Takagi Flow 全体プロセス
+============================================================
+1. 設計（ChatGPT）
+2. Canvas指示書化
+3. ClaudeCode 実行（フェーズ制）
+4. ChatGPT 検証 → ログ作成
+5. 問題時：Claude が介入（AI三段構え）
+6. 成功条件クリアで次フェーズへ
+7. 完成後、本番反映
+
+============================================================
+第12章：Takagi Flow 最終要約
+============================================================
+- フェーズ制
+- 成功条件チェック
+- チェックポイント
+- debugログ（logフォルダ管理・日付蓄積）
+- Canvas管理
+- AI三段構えの自動復旧ループ（ChatGPT ⇄ Claude ⇄ ClaudeCode）
+- 絵文字・装飾禁止
+- 日本語パス禁止
+- 完了条件＝成果の確認
+
+============================================================
+起動後の動作
+============================================================
+このプロトコルをロード後、人間が「Takagi Flowで進めて」と言うと、
+自動的に仕様確認を開始し、Phase S-0 から順に進行する。
+
+============================================================
+以上のプロトコルを記憶し、これ以降の開発では
+必ずこの仕様に従って動作してください。
+
+ロード完了したら以下のように返答してください：
+
+「Takagi Flow 深層プロトコル v3.0 をロードしました。
+開発を始める準備ができています。
+『Takagi Flowで進めて』と言っていただければ、仕様確認から開始します。」
+============================================================</pre>
+            </div>
+            
+            <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">深層プロトコルをコピーする</button>
+        </div>
+
+        <!-- 使い方 -->
+        <div class="section">
+            <h2 class="section-title">使い方</h2>
+            
+            <div class="highlight-box">
+                <h4>開発モードの起動方法</h4>
+                <ol style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li>Claudeで新しいチャットを開く</li>
+                    <li>上の深層プロトコルを貼り付ける</li>
+                    <li>「ロードしました」と返答されれば成功</li>
+                    <li>以後は <strong>「Takagi Flowで進めて」</strong> と言うだけ！</li>
+                </ol>
+            </div>
+            
+            <div class="warning-box">
+                <h4>注意</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li>新しいチャットを開くたびに、プロトコルを貼り直す必要があります</li>
+                    <li>ChatGPTではなく、<strong>Claude</strong>に貼ってください</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html">← 全体マップに戻る</a></p>
+            <p style="margin-top: 10px;">最終更新：2025年12月07日 | 高木産業株式会社</p>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt() {
+            var promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(function() {
+                var btn = document.getElementById('copy-btn');
+                btn.textContent = 'コピーしました！';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.textContent = '深層プロトコルをコピーする';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

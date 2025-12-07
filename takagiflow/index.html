@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ Takagi Flow 学習ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        /* ナビゲーション */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #3b82f6; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* ヘッダー */
+        .header {
+            text-align: center; margin-bottom: 50px;
+            padding-bottom: 30px; border-bottom: 2px solid #3b82f6;
+        }
+        .header h1 {
+            font-size: 2.2rem; color: #60a5fa; margin-bottom: 15px;
+        }
+        .header p { color: #94a3b8; font-size: 1.1rem; line-height: 1.8; }
+        
+        /* 3原則 */
+        .principles {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            margin-bottom: 50px;
+        }
+        @media (max-width: 768px) { .principles { grid-template-columns: 1fr; } }
+        
+        .principle {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 15px; padding: 25px; text-align: center;
+        }
+        .principle-num {
+            display: inline-block; width: 40px; height: 40px;
+            background: #3b82f6; border-radius: 50%;
+            line-height: 40px; font-weight: 700; margin-bottom: 15px;
+        }
+        .principle h3 { color: #60a5fa; font-size: 1.2rem; margin-bottom: 10px; }
+        .principle p { color: #94a3b8; font-size: 0.95rem; }
+        
+        /* 学習フロー */
+        .section-title {
+            font-size: 1.5rem; color: #60a5fa; margin-bottom: 25px;
+            padding-left: 15px; border-left: 4px solid #3b82f6;
+        }
+        
+        .flow-container { margin-bottom: 50px; }
+        
+        .flow-item {
+            display: flex; gap: 20px; align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .flow-line {
+            display: flex; flex-direction: column; align-items: center;
+            width: 50px; flex-shrink: 0;
+        }
+        .flow-dot {
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; color: #fff;
+        }
+        .flow-connector {
+            width: 2px; height: 80px; background: #334155; margin: 5px 0;
+        }
+        .flow-item:last-child .flow-connector { display: none; }
+        
+        .flow-card {
+            flex: 1; background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 20px; text-decoration: none; color: inherit;
+            transition: all 0.3s ease;
+        }
+        a.flow-card:hover {
+            transform: translateX(5px);
+            border-color: #60a5fa;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .flow-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .flow-card p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px; }
+        .flow-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+        .flow-badge {
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 500;
+        }
+        .badge-time { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge-tool { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        
+        /* 色分け */
+        .vol1 .flow-dot { background: #3b82f6; }
+        .vol1 .flow-card { border-left: 4px solid #3b82f6; }
+        .vol1 h3 { color: #60a5fa; }
+        
+        .claude .flow-dot { background: #8b5cf6; }
+        .claude .flow-card { border-left: 4px solid #8b5cf6; }
+        .claude h3 { color: #a78bfa; }
+        
+        .vol2 .flow-dot { background: #14b8a6; }
+        .vol2 .flow-card { border-left: 4px solid #14b8a6; }
+        .vol2 h3 { color: #2dd4bf; }
+        
+        .vol3 .flow-dot { background: #f97316; }
+        .vol3 .flow-card { border-left: 4px solid #f97316; }
+        .vol3 h3 { color: #fb923c; }
+        
+        .dev .flow-dot { background: #ec4899; }
+        .dev .flow-card { border-left: 4px solid #ec4899; }
+        .dev h3 { color: #f472b6; }
+        
+        /* 注意事項 */
+        .note-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin-top: 30px;
+        }
+        .note-box h3 { color: #fbbf24; margin-bottom: 10px; }
+        .note-box ul { margin-left: 20px; color: #94a3b8; }
+        .note-box li { margin-bottom: 8px; }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html" class="current">🗺️ 全体マップ</a>
+        <a href="vol1.html">📘 上巻</a>
+        <a href="claude.html">🤖 ClaudeCode</a>
+        <a href="vol2.html">📝 中巻</a>
+        <a href="vol3.html">🎯 下巻</a>
+        <a href="claude-dev.html">🧠 開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Takagi Flow 学習ガイド</h1>
+            <p>AIと一緒に「失敗しない開発」を学ぶ<br>初心者でも安心のステップバイステップ教材</p>
+        </div>
+
+        <!-- 3原則 -->
+        <div class="principles">
+            <div class="principle">
+                <div class="principle-num">1</div>
+                <h3>小さく分ける</h3>
+                <p>大きなタスクを<br>小さなステップに分解</p>
+            </div>
+            <div class="principle">
+                <div class="principle-num">2</div>
+                <h3>毎回確認する</h3>
+                <p>1ステップごとに<br>成功を確認してから次へ</p>
+            </div>
+            <div class="principle">
+                <div class="principle-num">3</div>
+                <h3>失敗したら戻る</h3>
+                <p>うまくいかなければ<br>前のステップに戻ってやり直し</p>
+            </div>
+        </div>
+
+        <!-- 学習フロー -->
+        <h2 class="section-title">学習の流れ</h2>
+        
+        <div class="flow-container">
+            <!-- 上巻 -->
+            <div class="flow-item vol1">
+                <div class="flow-line">
+                    <div class="flow-dot">1</div>
+                    <div class="flow-connector"></div>
+                </div>
+                <a href="vol1.html" class="flow-card">
+                    <h3>📘 上巻：Takagi Flow 入門</h3>
+                    <p>Takagi Flowの考え方を理解し、ChatGPTとの対話に慣れる</p>
+                    <div class="flow-meta">
+                        <span class="flow-badge badge-time">⏱️ 30〜45分</span>
+                        <span class="flow-badge badge-tool">💬 ChatGPTのみ</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- ClaudeCode -->
+            <div class="flow-item claude">
+                <div class="flow-line">
+                    <div class="flow-dot">2</div>
+                    <div class="flow-connector"></div>
+                </div>
+                <a href="claude.html" class="flow-card">
+                    <h3>🤖 ClaudeCode章：インストールと基本</h3>
+                    <p>ClaudeCodeをインストールして、ファイル操作ができるようにする</p>
+                    <div class="flow-meta">
+                        <span class="flow-badge badge-time">⏱️ 20〜30分</span>
+                        <span class="flow-badge badge-tool">💬 ChatGPT → 🖥️ インストール</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 中巻 -->
+            <div class="flow-item vol2">
+                <div class="flow-line">
+                    <div class="flow-dot">3</div>
+                    <div class="flow-connector"></div>
+                </div>
+                <a href="vol2.html" class="flow-card">
+                    <h3>📝 中巻：指示書の書き方 + 実行</h3>
+                    <p>ChatGPTで指示書を作成し、ClaudeCodeで実行する連携を学ぶ</p>
+                    <div class="flow-meta">
+                        <span class="flow-badge badge-time">⏱️ 40〜60分</span>
+                        <span class="flow-badge badge-tool">💬 ChatGPT → 🤖 ClaudeCode</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 下巻 -->
+            <div class="flow-item vol3">
+                <div class="flow-line">
+                    <div class="flow-dot">4</div>
+                    <div class="flow-connector"></div>
+                </div>
+                <a href="vol3.html" class="flow-card">
+                    <h3>🎯 下巻：フェーズ分けとチェック実践</h3>
+                    <p>Phase 0→1→2→3 の流れで安全に開発を進める方法を実践</p>
+                    <div class="flow-meta">
+                        <span class="flow-badge badge-time">⏱️ 60〜90分</span>
+                        <span class="flow-badge badge-tool">💬 ChatGPT ⇄ 🤖 ClaudeCode</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 開発モード -->
+            <div class="flow-item dev">
+                <div class="flow-line">
+                    <div class="flow-dot">★</div>
+                </div>
+                <a href="claude-dev.html" class="flow-card">
+                    <h3>🧠 開発モード：深層プロトコル</h3>
+                    <p>修了後、実際の開発でClaudeを「Takagi Flow専用AI」にする上級機能</p>
+                    <div class="flow-meta">
+                        <span class="flow-badge badge-tool">🧠 Claude本体</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 注意事項 -->
+        <div class="note-box">
+            <h3>📌 学習を始める前に</h3>
+            <ul>
+                <li>ChatGPTのアカウントを用意してください（無料版でOK）</li>
+                <li>パソコンで操作してください（スマホでは一部機能が使えません）</li>
+                <li>各巻は順番に進めてください（前の巻の内容を前提としています）</li>
+                <li>わからないことがあれば、ChatGPTに質問しながら進めましょう</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>作成：2025年12月 | 高木産業株式会社</p>
+        </div>
+    </div>
+</body>
+</html>

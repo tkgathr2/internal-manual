@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 中巻：指示書の書き方 + 実行 | Takagi Flow 学習ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #14b8a6; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header {
+            text-align: center; margin-bottom: 40px;
+            padding-bottom: 30px; border-bottom: 2px solid #14b8a6;
+        }
+        .header h1 { font-size: 2rem; color: #2dd4bf; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 1rem; }
+        .header-meta { margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .meta-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .meta-time { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .meta-tool { background: rgba(20, 184, 166, 0.2); color: #2dd4bf; }
+        
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.4rem; color: #2dd4bf; margin-bottom: 20px;
+            padding-left: 15px; border-left: 4px solid #14b8a6;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .card h3 { color: #f1f5f9; margin-bottom: 15px; font-size: 1.15rem; }
+        .card p { color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 25px; color: #cbd5e1; line-height: 2; }
+        
+        /* 連携フロー */
+        .flow-diagram {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; flex-wrap: wrap; margin: 30px 0; padding: 30px;
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 16px;
+        }
+        .flow-box {
+            padding: 15px 25px; border-radius: 10px;
+            text-align: center; font-weight: 600;
+        }
+        .flow-chatgpt { background: #3b82f6; color: #fff; }
+        .flow-claude { background: #8b5cf6; color: #fff; }
+        .flow-arrow { font-size: 1.5rem; color: #2dd4bf; }
+        .flow-label { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
+        
+        /* プロンプトセクション */
+        .prompt-section {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.15));
+            border: 2px solid rgba(20, 184, 166, 0.5);
+            border-radius: 16px; padding: 30px; margin: 30px 0;
+        }
+        .prompt-section h2 {
+            color: #2dd4bf; font-size: 1.3rem; margin-bottom: 20px; text-align: center;
+        }
+        .prompt-instructions {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        .prompt-instructions ol { color: #cbd5e1; margin-left: 20px; line-height: 2; }
+        .prompt-instructions strong { color: #2dd4bf; }
+        .prompt-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 20px;
+            max-height: 500px; overflow-y: auto; margin-bottom: 20px;
+        }
+        .prompt-box pre {
+            color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+        }
+        .copy-btn {
+            display: block; width: 100%; padding: 15px 30px;
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(20, 184, 166, 0.4); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        /* 4項目カード */
+        .canvas-items {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) { .canvas-items { grid-template-columns: 1fr; } }
+        .canvas-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 20px;
+        }
+        .canvas-item-num {
+            display: inline-block; width: 30px; height: 30px;
+            background: #14b8a6; color: #fff; border-radius: 50%;
+            text-align: center; line-height: 30px;
+            font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;
+        }
+        .canvas-item h4 { color: #2dd4bf; font-size: 1rem; margin-bottom: 8px; }
+        .canvas-item p { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+        
+        /* プロジェクト紹介 */
+        .project-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 16px; padding: 25px; margin: 20px 0;
+        }
+        .project-box h3 { color: #60a5fa; margin-bottom: 15px; }
+        .project-box p { color: #cbd5e1; }
+        .project-box ul { margin-left: 25px; margin-top: 10px; color: #94a3b8; }
+        
+        /* コード例 */
+        .code-example {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 15px; margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-example code {
+            color: #a5f3fc; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre;
+        }
+        
+        /* 良い例・悪い例 */
+        .example-good {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px; padding: 20px; margin: 10px 0;
+        }
+        .example-good h4 { color: #34d399; margin-bottom: 10px; }
+        .example-good p { color: #cbd5e1; font-size: 0.95rem; margin: 0; }
+        
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .highlight-box h4 { color: #34d399; margin-bottom: 10px; }
+        
+        .warning-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .warning-box h4 { color: #fbbf24; margin-bottom: 10px; }
+        
+        .next-step {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.15));
+            border: 2px solid rgba(249, 115, 22, 0.5);
+            border-radius: 16px; padding: 30px; text-align: center; margin-top: 40px;
+        }
+        .next-step h3 { color: #fb923c; margin-bottom: 15px; }
+        .next-step p { color: #94a3b8; margin-bottom: 20px; }
+        .next-btn {
+            display: inline-block; padding: 12px 30px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white; border-radius: 10px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease;
+        }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(249, 115, 22, 0.4); }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        .footer a { color: #2dd4bf; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html">🗺️ 全体マップ</a>
+        <a href="vol1.html">📘 上巻</a>
+        <a href="claude.html">🤖 ClaudeCode</a>
+        <a href="vol2.html" class="current">📝 中巻</a>
+        <a href="vol3.html">🎯 下巻</a>
+        <a href="claude-dev.html">🧠 開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>📝 中巻：指示書の書き方 + 実行</h1>
+            <p>ChatGPTで指示書を作成し、ClaudeCodeで実行する連携を学ぶ</p>
+            <div class="header-meta">
+                <span class="meta-badge meta-time">⏱️ 40〜60分</span>
+                <span class="meta-badge meta-tool">💬 ChatGPT → 🤖 ClaudeCode</span>
+            </div>
+        </div>
+
+        <!-- ゴール -->
+        <div class="section">
+            <h2 class="section-title">🎯 この巻のゴール</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>4項目の指示書</strong>が書ける</li>
+                    <li><strong>ChatGPT → ClaudeCode</strong> の流れを体験する</li>
+                    <li><strong>PythonでExcelファイルを作成</strong>できる</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 今日のプロジェクト -->
+        <div class="section">
+            <h2 class="section-title">🎯 今日作るもの</h2>
+            
+            <div class="project-box">
+                <h3>📊 ファイル一覧Excelを自動生成</h3>
+                <p>testフォルダの中にあるファイルを調べて、<strong>Excelファイル（filelist.xlsx）</strong>に一覧を出力するPythonスクリプトを作ります。</p>
+                <ul>
+                    <li>A列：ファイル名</li>
+                    <li>B列：ファイルサイズ（バイト）</li>
+                    <li>C列：更新日時</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>完成イメージ</h3>
+                <div class="code-example">
+                    <code>filelist.xlsx の中身：
+
+| ファイル名    | サイズ(byte) | 更新日時            |
+|--------------|-------------|---------------------|
+| test1.txt    | 24          | 2025-12-06 10:30:00 |
+| test2.txt    | 156         | 2025-12-06 10:31:00 |
+| test3.txt    | 89          | 2025-12-06 10:32:00 |</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- 連携フロー -->
+        <div class="section">
+            <h2 class="section-title">🔄 ChatGPT と ClaudeCode の連携</h2>
+            
+            <div class="flow-diagram">
+                <div>
+                    <div class="flow-box flow-chatgpt">💬 ChatGPT</div>
+                    <div class="flow-label">指示書を作る</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div>
+                    <div class="flow-box flow-claude">🤖 ClaudeCode</div>
+                    <div class="flow-label">Pythonで実行</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div>
+                    <div class="flow-box" style="background: #10b981; color: #fff;">📊 Excel完成</div>
+                    <div class="flow-label">filelist.xlsx</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4項目の指示書 -->
+        <div class="section">
+            <h2 class="section-title">📋 4項目の指示書（Canvas）</h2>
+            
+            <div class="card">
+                <p>AIに作業をお願いするとき、この4つを書くと伝わりやすくなります。</p>
+            </div>
+            
+            <div class="canvas-items">
+                <div class="canvas-item">
+                    <div class="canvas-item-num">1</div>
+                    <h4>やりたいこと</h4>
+                    <p>何をしたいのか、一言で</p>
+                </div>
+                <div class="canvas-item">
+                    <div class="canvas-item-num">2</div>
+                    <h4>目的</h4>
+                    <p>なぜそれをするのか</p>
+                </div>
+                <div class="canvas-item">
+                    <div class="canvas-item-num">3</div>
+                    <h4>成功した状態</h4>
+                    <p>どうなったらOKか</p>
+                </div>
+                <div class="canvas-item">
+                    <div class="canvas-item-num">4</div>
+                    <h4>AIへのお願い</h4>
+                    <p>使う技術やルール</p>
+                </div>
+            </div>
+            
+            <div class="example-good">
+                <h4>✅ 今日のプロジェクトの指示書例</h4>
+                <p><strong>【やりたいこと】</strong><br>testフォルダ内のファイル情報をExcelに出力したい</p>
+                <p style="margin-top: 10px;"><strong>【目的】</strong><br>フォルダの中身を一覧で把握したい</p>
+                <p style="margin-top: 10px;"><strong>【成功した状態】</strong><br>filelist.xlsx ができて、A列にファイル名、B列にサイズ、C列に更新日時が入っている</p>
+                <p style="margin-top: 10px;"><strong>【AIへのお願い】</strong><br>Pythonで作成。openpyxlを使用。1行目はヘッダー行にする</p>
+            </div>
+        </div>
+
+        <!-- プロンプトセクション -->
+        <div class="prompt-section">
+            <h2>📋 ChatGPTに貼り付けるプロンプト</h2>
+            
+            <div class="prompt-instructions">
+                <ol>
+                    <li><strong>ChatGPT</strong>を開く</li>
+                    <li>下の「コピー」ボタンをクリック</li>
+                    <li>ChatGPTに貼り付けて <strong>Enter</strong></li>
+                    <li>先生と一緒に指示書を作り、ClaudeCodeで実行しましょう！</li>
+                </ol>
+            </div>
+            
+            <div class="prompt-box">
+                <pre id="prompt-text">あなたは「指示書（Canvas）の書き方」と「ClaudeCodeとの連携」を教える優しい先生です。
+今から生徒に、4項目の指示書の書き方を教え、実際にClaudeCodeでPythonスクリプトを実行するところまで一緒にやります。
+
+【今日のプロジェクト】
+「testフォルダ内のファイル情報をExcelに出力するPythonスクリプト」
+
+【完成イメージ】
+- filelist.xlsx というExcelファイルが作成される
+- A列：ファイル名
+- B列：ファイルサイズ（バイト）
+- C列：更新日時
+- 1行目はヘッダー行
+
+【あなたのルール】
+- 必ず1ステップずつ進める
+- 各ステップで「できましたか？」と確認する
+- 生徒が「できた」と答えてから次に進む
+- 指示書は必ず4項目で整理する
+- ClaudeCodeに貼る形式で指示書を完成させる
+
+【4項目の指示書とは】
+1. やりたいこと（What）：何をしたいのか、一言で
+2. 目的（Why）：なぜそれをするのか
+3. 成功した状態（Done）：どうなったらOKか
+4. AIへのお願い（How）：使う技術やルール
+
+【教える内容】
+
+■ ステップ1：準備確認
+1. testフォルダがあるか確認
+2. testフォルダの中にファイルが3つ以上あるか確認
+   - なければ作ってもらう：test1.txt, test2.txt, test3.txt
+   - 中身は適当でOK（「こんにちは」など）
+3. 確認：「testフォルダに3つ以上ファイルがありますか？」
+
+■ ステップ2：「やりたいこと」を書く
+1. 今日のプロジェクトを「一言で」書いてもらう
+2. 例：「testフォルダ内のファイル情報をExcelに出力したい」
+3. 確認：「やりたいことを一言で書けましたか？」
+
+■ ステップ3：「目的」を書く
+1. なぜそれをしたいのかを書いてもらう
+2. 例：「フォルダの中身を一覧で把握したい」
+3. 確認：「目的を書けましたか？」
+
+■ ステップ4：「成功した状態」を書く
+1. 具体的にどうなったらOKかを書いてもらう
+2. 例：「filelist.xlsx ができて、A列にファイル名、B列にサイズ、C列に更新日時が入っている」
+3. ポイント：ファイル名や列の内容を具体的に！
+4. 確認：「成功した状態を書けましたか？」
+
+■ ステップ5：「AIへのお願い」を書く
+1. 使う技術やルールを書いてもらう
+2. 例：「Pythonで作成。openpyxlを使用。1行目はヘッダー行にする」
+3. 確認：「AIへのお願いを書けましたか？」
+
+■ ステップ6：指示書を完成させる
+1. 4項目をまとめて、ClaudeCodeに貼る形に整形する
+2. 以下の形式で整理：
+
+---
+【やりたいこと】
+testフォルダ内のファイル情報をExcelに出力したい
+
+【目的】
+フォルダの中身を一覧で把握したい
+
+【成功した状態】
+- filelist.xlsx というExcelファイルができる
+- A列：ファイル名
+- B列：ファイルサイズ（バイト）
+- C列：更新日時
+- 1行目はヘッダー行（「ファイル名」「サイズ(byte)」「更新日時」）
+
+【AIへのお願い】
+- Pythonで作成
+- openpyxlを使用
+- testフォルダ内のすべてのファイルを対象にする
+---
+
+3. 確認：「この指示書で大丈夫そうですか？」
+
+■ ステップ7：ClaudeCodeで実行
+1. 生徒に以下の手順を伝える：
+   a. ClaudeCodeを開く
+   b. 作業フォルダ（testフォルダがある場所）を開く
+   c. 完成した指示書をコピーして貼り付ける
+   d. Enterを押して実行
+   e. 「openpyxlをインストールしていいですか？」と聞かれたらYes
+   f. 結果を確認
+2. 確認：「ClaudeCodeで実行できましたか？」
+
+■ ステップ8：結果の確認
+1. testフォルダを開いて確認：
+   - filelist.xlsx ができているか？
+   - Excelを開いて、A列にファイル名が入っているか？
+   - B列にサイズ、C列に更新日時が入っているか？
+2. 成功した場合：
+   - 「成功した状態」と照らし合わせて確認
+   - おめでとう！Pythonでプログラムが作れました！
+3. 失敗した場合：
+   - エラーメッセージを見せてもらう
+   - 一緒に原因を考える
+   - 指示書を修正する
+   - 再度ClaudeCodeで実行
+4. 確認：「Excelファイルはできましたか？スクショを見せてください」
+
+■ ステップ9：まとめ
+1. 今日やったことを振り返る
+   - 4項目の指示書を作った
+   - ChatGPTで指示書を整理した
+   - ClaudeCodeでPythonスクリプトを実行した
+   - Excelファイルが自動生成された！
+2. 今日学んだこと：
+   - 「やりたいこと」「目的」「成功した状態」「AIへのお願い」を整理すると、AIが正しく動く
+   - ChatGPTで考えて、ClaudeCodeで実行する流れ
+3. 次の「下巻」の予告：フェーズ分けを学ぶ
+4. お疲れ様でした！
+
+【重要】
+- 4項目が揃わないとClaudeCodeに貼らせない
+- 失敗しても「どこが違ったか」を一緒に考える
+- ChatGPTで考える → ClaudeCodeで実行、の流れを体験させる
+
+それでは、最初の挨拶から始めてください！</pre>
+            </div>
+            
+            <button class="copy-btn" onclick="copyPrompt()">📋 プロンプトをコピーする</button>
+        </div>
+
+        <!-- ヒント -->
+        <div class="section">
+            <h2 class="section-title">💡 ヒント</h2>
+            
+            <div class="highlight-box">
+                <h4>✅ うまくいくコツ</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li>「成功した状態」は具体的に書く（ファイル名、列の内容など）</li>
+                    <li>openpyxlのインストールを聞かれたらYesと答える</li>
+                    <li>失敗したらスクショをChatGPTに見せる</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <h4>⚠️ よくあるエラー</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li><strong>「openpyxlがない」</strong> → ClaudeCodeが自動でインストールを提案します</li>
+                    <li><strong>「testフォルダがない」</strong> → 作業フォルダを確認してください</li>
+                    <li><strong>「Excelが開けない」</strong> → 一度閉じてから再実行してください</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 次へ -->
+        <div class="next-step">
+            <h3>🎉 中巻を終えたら</h3>
+            <p>次は「下巻」で、フェーズ分けを使った<br>より複雑なプロジェクトに挑戦しましょう！</p>
+            <a href="vol3.html" class="next-btn">🎯 下巻へ進む →</a>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html">← 全体マップに戻る</a></p>
+            <p style="margin-top: 10px;">作成：2025年12月 | 高木産業株式会社</p>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt() {
+            const promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ コピーしました！';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 プロンプトをコピーする';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

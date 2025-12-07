@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 ClaudeCode章：インストールと基本 | Takagi Flow 学習ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #8b5cf6; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header {
+            text-align: center; margin-bottom: 40px;
+            padding-bottom: 30px; border-bottom: 2px solid #8b5cf6;
+        }
+        .header h1 { font-size: 2rem; color: #a78bfa; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 1rem; }
+        .header-meta { margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .meta-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .meta-time { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .meta-tool { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+        
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.4rem; color: #a78bfa; margin-bottom: 20px;
+            padding-left: 15px; border-left: 4px solid #8b5cf6;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .card h3 { color: #f1f5f9; margin-bottom: 15px; font-size: 1.15rem; }
+        .card p { color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 25px; color: #cbd5e1; line-height: 2; }
+        
+        /* プロンプトセクション */
+        .prompt-section {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(109, 40, 217, 0.15));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 16px; padding: 30px; margin: 30px 0;
+        }
+        .prompt-section h2 {
+            color: #a78bfa; font-size: 1.3rem; margin-bottom: 20px; text-align: center;
+        }
+        .prompt-instructions {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        .prompt-instructions ol { color: #cbd5e1; margin-left: 20px; line-height: 2; }
+        .prompt-instructions strong { color: #a78bfa; }
+        .prompt-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 20px;
+            max-height: 400px; overflow-y: auto; margin-bottom: 20px;
+        }
+        .prompt-box pre {
+            color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+        }
+        .copy-btn {
+            display: block; width: 100%; padding: 15px 30px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        /* 比較テーブル */
+        .compare-table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+        }
+        .compare-table th, .compare-table td {
+            padding: 15px; text-align: left; border-bottom: 1px solid #334155;
+        }
+        .compare-table th { background: rgba(30, 41, 59, 0.8); color: #f1f5f9; }
+        .compare-table td { color: #cbd5e1; }
+        .compare-table .check { color: #34d399; font-weight: bold; }
+        .compare-table .cross { color: #f87171; }
+        
+        /* ステップカード */
+        .step-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 20px; margin-bottom: 15px;
+        }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .step-num {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white; font-weight: 700; font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .step-title { font-size: 1.1rem; color: #f1f5f9; font-weight: 600; }
+        .step-content { color: #94a3b8; padding-left: 55px; }
+        .step-content ul { margin-left: 20px; margin-top: 10px; }
+        
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .highlight-box h4 { color: #34d399; margin-bottom: 10px; }
+        
+        .warning-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .warning-box h4 { color: #fbbf24; margin-bottom: 10px; }
+        
+        /* ログイン情報 */
+        .login-box {
+            background: rgba(139, 92, 246, 0.15);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 12px; padding: 25px;
+        }
+        .email-display {
+            display: flex; align-items: center; gap: 15px; margin-top: 15px; flex-wrap: wrap;
+        }
+        .email-code {
+            font-size: 1.2rem; background: #0f172a; padding: 12px 20px;
+            border-radius: 8px; color: #a78bfa; font-family: monospace;
+        }
+        .copy-email-btn {
+            padding: 10px 20px; background: #8b5cf6; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .copy-email-btn:hover { background: #7c3aed; }
+        .copy-email-btn.copied { background: #10b981; }
+        .login-link {
+            display: inline-block; margin-top: 10px; padding: 12px 25px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white; border-radius: 8px; text-decoration: none; font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .login-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4); }
+        
+        .next-step {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.15));
+            border: 2px solid rgba(20, 184, 166, 0.5);
+            border-radius: 16px; padding: 30px; text-align: center; margin-top: 40px;
+        }
+        .next-step h3 { color: #2dd4bf; margin-bottom: 15px; }
+        .next-step p { color: #94a3b8; margin-bottom: 20px; }
+        .next-btn {
+            display: inline-block; padding: 12px 30px;
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            color: white; border-radius: 10px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease;
+        }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(20, 184, 166, 0.4); }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        .footer a { color: #a78bfa; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html">🗺️ 全体マップ</a>
+        <a href="vol1.html">📘 上巻</a>
+        <a href="claude.html" class="current">🤖 ClaudeCode</a>
+        <a href="vol2.html">📝 中巻</a>
+        <a href="vol3.html">🎯 下巻</a>
+        <a href="claude-dev.html">🧠 開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤖 ClaudeCode章：インストールと基本</h1>
+            <p>ClaudeCodeをインストールして、ファイル操作ができるようにする</p>
+            <div class="header-meta">
+                <span class="meta-badge meta-time">⏱️ 20〜30分</span>
+                <span class="meta-badge meta-tool">💬 ChatGPT → 🖥️ インストール</span>
+            </div>
+        </div>
+
+        <!-- ゴール -->
+        <div class="section">
+            <h2 class="section-title">🎯 この章のゴール</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>ClaudeCode</strong>がインストールされている</li>
+                    <li>フォルダを指定して起動できる</li>
+                    <li>簡単なファイル作成ができた</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ClaudeCodeとは -->
+        <div class="section">
+            <h2 class="section-title">❓ ClaudeCodeとは</h2>
+            <div class="card">
+                <p>ClaudeCodeは、<strong>あなたのパソコンでファイル操作ができるAI</strong>です。</p>
+                <p>普通のChatGPTやClaudeは「会話」しかできませんが、ClaudeCodeは：</p>
+                <ul>
+                    <li>ファイルを読む</li>
+                    <li>ファイルを作る</li>
+                    <li>プログラムを実行する</li>
+                </ul>
+                <p>ができます。これが Takagi Flow で「実際に作業する」ために必要なツールです。</p>
+            </div>
+            
+            <div class="card">
+                <h3>📊 ChatGPT vs ClaudeCode</h3>
+                <table class="compare-table">
+                    <tr>
+                        <th>機能</th>
+                        <th>ChatGPT</th>
+                        <th>ClaudeCode</th>
+                    </tr>
+                    <tr>
+                        <td>会話する</td>
+                        <td class="check">○</td>
+                        <td class="check">○</td>
+                    </tr>
+                    <tr>
+                        <td>ファイルを読む</td>
+                        <td class="cross">×</td>
+                        <td class="check">○</td>
+                    </tr>
+                    <tr>
+                        <td>ファイルを作る</td>
+                        <td class="cross">×</td>
+                        <td class="check">○</td>
+                    </tr>
+                    <tr>
+                        <td>プログラム実行</td>
+                        <td class="cross">×</td>
+                        <td class="check">○</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ログイン情報 -->
+        <div class="section">
+            <h2 class="section-title">🔑 ログイン情報</h2>
+            <div class="login-box">
+                <h3>ClaudeのログインID</h3>
+                <div class="email-display">
+                    <code class="email-code" id="login-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="92e6f3f9f3f5fbd2e2fde1fbe6fbe4f7bfe8bcf1fdbcf8e2">[email&#160;protected]</a></code>
+                    <button onclick="copyEmail()" class="copy-email-btn" id="email-copy-btn">📋 IDをコピー</button>
+                </div>
+                <p style="margin-top: 15px; color: #94a3b8;">※ パスワードは管理者に確認してください</p>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155;">
+                    <h3>🔗 ログイン画面</h3>
+                    <a href="https://claude.ai/login" target="_blank" class="login-link">Claudeログイン画面を開く →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- プロンプトセクション -->
+        <div class="prompt-section">
+            <h2>📋 ChatGPTに貼り付けるプロンプト</h2>
+            
+            <div class="prompt-instructions">
+                <ol>
+                    <li><strong>ChatGPT</strong>を開く</li>
+                    <li>下の「コピー」ボタンをクリック</li>
+                    <li>ChatGPTに貼り付けて <strong>Enter</strong></li>
+                    <li>先生の指示に従って、ClaudeCodeをインストールしましょう！</li>
+                </ol>
+            </div>
+            
+            <div class="prompt-box">
+                <pre id="prompt-text">あなたは「ClaudeCode」のインストールを教える優しい先生です。
+今から初心者に、ClaudeCodeのインストールと基本操作を教えてください。
+
+【あなたのルール】
+- 必ず1ステップずつ進める
+- 各ステップで「できましたか？」と確認する
+- 生徒が「できた」と答えてから次に進む
+- スクリーンキャプチャを見せてもらったら確認する
+- 難しい言葉は使わない
+
+【教える内容】
+
+■ ステップ1：ClaudeCodeの説明
+1. ClaudeCodeとは何かを簡単に説明
+   - 普通のChatGPTとの違い
+   - ファイルを読む・作る・実行できる
+2. 安心ポイント：指定したフォルダの中しか触れない
+3. 確認：「ClaudeCodeがどんなものかわかりましたか？」
+
+■ ステップ2：ダウンロード
+1. ブラウザで https://claude.ai/download を開いてもらう
+2. 「Download for Windows」をクリック
+3. ダウンロードが完了するまで待つ
+4. 確認：「ダウンロードできましたか？スクショを見せてください」
+
+■ ステップ3：インストール
+1. ダウンロードしたファイルをダブルクリック
+2. インストーラーの指示に従う
+3. インストールが完了するまで待つ
+4. 確認：「インストールできましたか？」
+
+■ ステップ4：初回ログイン
+1. ClaudeCodeを起動
+2. Claudeアカウントでログイン
+   - ログインID：<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0d796c666c6a644d7d627e6479647b682077236e6223677d">[email&#160;protected]</a>
+   - パスワードは管理者に確認
+3. 確認：「ログインできましたか？」
+
+■ ステップ5：作業フォルダの作成
+1. デスクトップに「test」という名前のフォルダを作成
+2. 作成方法：
+   - デスクトップで右クリック
+   - 「新規作成」→「フォルダー」
+   - 名前を「test」に変更
+3. 確認：「testフォルダを作れましたか？」
+
+■ ステップ6：ClaudeCodeでフォルダを開く
+1. ClaudeCodeで「Open Folder」または「フォルダを開く」をクリック
+2. さっき作った「test」フォルダを選択
+3. 確認：「フォルダを開けましたか？」
+
+■ ステップ7：最初のテスト
+1. ClaudeCodeに「hello.txt というファイルを作って、中に『こんにちは』と書いてください」と入力
+2. 実行を許可する
+3. testフォルダを確認してhello.txtがあるか確認
+4. ファイルを開いて「こんにちは」と書いてあるか確認
+5. 確認：「ファイルができましたか？スクショを見せてください」
+
+■ ステップ8：まとめ
+1. 今日できたことを振り返る
+   - ClaudeCodeをインストールした
+   - フォルダを指定して開いた
+   - ファイルを作成できた
+2. 次の「中巻」の予告
+3. お疲れ様でした！
+
+【重要】
+- 生徒が「できた」と言うまで次に進まない
+- エラーが出たらスクリーンキャプチャを見せてもらう
+- 急がない、ゆっくり進める
+
+それでは、最初の説明から始めてください！</pre>
+            </div>
+            
+            <button class="copy-btn" id="prompt-copy-btn" onclick="copyPrompt()">📋 プロンプトをコピーする</button>
+        </div>
+
+        <!-- ダウンロードリンク -->
+        <div class="section">
+            <h2 class="section-title">📥 ダウンロード</h2>
+            <div class="card">
+                <h3>ClaudeCodeをダウンロード</h3>
+                <p>ChatGPTの先生の指示に従って、下のボタンからダウンロードしてください。</p>
+                <a href="https://claude.ai/download" target="_blank" class="login-link" style="margin-top: 15px;">ClaudeCodeダウンロードページ →</a>
+            </div>
+        </div>
+
+        <!-- 学習ステップ -->
+        <div class="section">
+            <h2 class="section-title">📚 学習ステップ</h2>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">1</div>
+                    <div class="step-title">ClaudeCodeの説明</div>
+                </div>
+                <div class="step-content">
+                    <p>ClaudeCodeがどんなツールかを理解します。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">2</div>
+                    <div class="step-title">ダウンロード</div>
+                </div>
+                <div class="step-content">
+                    <p>公式サイトからClaudeCodeをダウンロードします。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">3</div>
+                    <div class="step-title">インストール</div>
+                </div>
+                <div class="step-content">
+                    <p>ダウンロードしたファイルを実行してインストールします。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">4</div>
+                    <div class="step-title">ログイン</div>
+                </div>
+                <div class="step-content">
+                    <p>Claudeアカウントでログインします。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">5</div>
+                    <div class="step-title">フォルダ作成</div>
+                </div>
+                <div class="step-content">
+                    <p>デスクトップに「test」フォルダを作ります。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">6</div>
+                    <div class="step-title">フォルダを開く</div>
+                </div>
+                <div class="step-content">
+                    <p>ClaudeCodeでtestフォルダを開きます。</p>
+                </div>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-num">7</div>
+                    <div class="step-title">最初のテスト</div>
+                </div>
+                <div class="step-content">
+                    <p>hello.txtファイルを作成してみます。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 注意事項 -->
+        <div class="section">
+            <h2 class="section-title">⚠️ 注意事項</h2>
+            
+            <div class="highlight-box">
+                <h4>✅ ClaudeCodeの安全性</h4>
+                <p style="color: #cbd5e1;">ClaudeCodeは<strong>指定したフォルダの中しか操作できません</strong>。</p>
+                <p style="color: #cbd5e1; margin-top: 10px;">パソコン全体を勝手に触ることはないので、安心して使えます。</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>⚠️ よくあるエラー</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li><strong>「ログインできない」</strong> → IDとパスワードを確認してください</li>
+                    <li><strong>「フォルダが開けない」</strong> → フォルダのパスを確認してください</li>
+                    <li><strong>「実行許可を求められる」</strong> → 「許可」をクリックしてください</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 次へ -->
+        <div class="next-step">
+            <h3>🎉 ClaudeCode章を終えたら</h3>
+            <p>ClaudeCodeが使えるようになったら、<br>次は「中巻」で指示書の書き方を学びましょう！</p>
+            <a href="vol2.html" class="next-btn">📝 中巻へ進む →</a>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html">← 全体マップに戻る</a></p>
+            <p style="margin-top: 10px;">作成：2025年12月 | 高木産業株式会社</p>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function copyEmail() {
+            const email = 'takagi@positive-z.co.jp';
+            navigator.clipboard.writeText(email).then(function() {
+                var btn = document.getElementById('email-copy-btn');
+                btn.textContent = '✅ コピーしました！';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.textContent = '📋 IDをコピー';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        function copyPrompt() {
+            var promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(function() {
+                var btn = document.getElementById('prompt-copy-btn');
+     

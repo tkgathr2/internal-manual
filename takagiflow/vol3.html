@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 下巻：フェーズ分けとチェック実践 | Takagi Flow 学習ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #f97316; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header {
+            text-align: center; margin-bottom: 40px;
+            padding-bottom: 30px; border-bottom: 2px solid #f97316;
+        }
+        .header h1 { font-size: 2rem; color: #fb923c; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 1rem; }
+        .header-meta { margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .meta-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .meta-time { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .meta-tool { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+        
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.4rem; color: #fb923c; margin-bottom: 20px;
+            padding-left: 15px; border-left: 4px solid #f97316;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .card h3 { color: #f1f5f9; margin-bottom: 15px; font-size: 1.15rem; }
+        .card p { color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 25px; color: #cbd5e1; line-height: 2; }
+        
+        /* プロジェクト紹介 */
+        .project-box {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.15));
+            border: 2px solid rgba(249, 115, 22, 0.5);
+            border-radius: 16px; padding: 25px; margin: 20px 0;
+        }
+        .project-box h3 { color: #fb923c; margin-bottom: 15px; }
+        .project-box p { color: #cbd5e1; }
+        .project-box ul { margin-left: 25px; margin-top: 10px; color: #94a3b8; }
+        
+        /* コード例 */
+        .code-example {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 15px; margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-example code {
+            color: #a5f3fc; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre;
+        }
+        
+        /* フェーズ図 */
+        .phase-flow, .flow-diagram {
+            display: flex; justify-content: center; align-items: center;
+            gap: 15px; margin: 30px 0; flex-wrap: wrap;
+            padding: 30px;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 16px;
+        }
+        .phase-box {
+            flex: 0 1 auto; min-width: 150px;
+            padding: 20px 15px; border-radius: 12px;
+            text-align: center;
+        }
+        .phase-box h4 { font-size: 1rem; margin-bottom: 8px; }
+        .phase-box p { font-size: 0.85rem; margin: 0; }
+        .phase-arrow { font-size: 1.5rem; color: #fb923c; }
+        @media (max-width: 768px) {
+            .phase-flow, .flow-diagram { flex-direction: column; }
+            .phase-arrow { transform: rotate(90deg); }
+        }
+        
+        .phase-0 { background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); }
+        .phase-0 h4 { color: #94a3b8; }
+        .phase-0 p { color: #64748b; }
+        
+        .phase-1 { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); }
+        .phase-1 h4 { color: #60a5fa; }
+        .phase-1 p { color: #3b82f6; }
+        
+        .phase-2 { background: rgba(20, 184, 166, 0.2); border: 1px solid rgba(20, 184, 166, 0.4); }
+        .phase-2 h4 { color: #2dd4bf; }
+        .phase-2 p { color: #14b8a6; }
+        
+        .phase-3 { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); }
+        .phase-3 h4 { color: #34d399; }
+        .phase-3 p { color: #10b981; }
+        
+        /* プロンプトセクション */
+        .prompt-section {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.15));
+            border: 2px solid rgba(249, 115, 22, 0.5);
+            border-radius: 16px; padding: 30px; margin: 30px 0;
+        }
+        .prompt-section h2 {
+            color: #fb923c; font-size: 1.3rem; margin-bottom: 20px; text-align: center;
+        }
+        .prompt-instructions {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        .prompt-instructions ol { color: #cbd5e1; margin-left: 20px; line-height: 2; }
+        .prompt-instructions strong { color: #fb923c; }
+        .prompt-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 20px;
+            max-height: 500px; overflow-y: auto; margin-bottom: 20px;
+        }
+        .prompt-box pre {
+            color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+        }
+        .copy-btn {
+            display: block; width: 100%; padding: 15px 30px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(249, 115, 22, 0.4); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        /* フェーズ詳細カード */
+        .phase-detail {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .phase-detail-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
+        }
+        .phase-num {
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.2rem; color: #fff;
+        }
+        .phase-num.p0 { background: #64748b; }
+        .phase-num.p1 { background: #3b82f6; }
+        .phase-num.p2 { background: #14b8a6; }
+        .phase-num.p3 { background: #10b981; }
+        .phase-detail h3 { font-size: 1.2rem; }
+        .phase-detail h3.p0 { color: #94a3b8; }
+        .phase-detail h3.p1 { color: #60a5fa; }
+        .phase-detail h3.p2 { color: #2dd4bf; }
+        .phase-detail h3.p3 { color: #34d399; }
+        .phase-detail p { color: #cbd5e1; line-height: 1.8; }
+        .phase-detail ul { margin-left: 25px; margin-top: 10px; color: #94a3b8; }
+        .phase-detail li { margin-bottom: 8px; }
+        
+        .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .highlight-box h4 { color: #34d399; margin-bottom: 10px; }
+        
+        .warning-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .warning-box h4 { color: #fbbf24; margin-bottom: 10px; }
+        
+        .complete-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            border: 2px solid rgba(16, 185, 129, 0.5);
+            border-radius: 16px; padding: 30px; text-align: center; margin-top: 40px;
+        }
+        .complete-box h3 { color: #34d399; margin-bottom: 15px; font-size: 1.5rem; }
+        .complete-box p { color: #94a3b8; margin-bottom: 20px; }
+        .complete-btn {
+            display: inline-block; padding: 12px 30px;
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: white; border-radius: 10px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease; margin: 5px;
+        }
+        .complete-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4); }
+        .complete-btn.secondary {
+            background: linear-gradient(135deg, #475569, #334155);
+        }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        .footer a { color: #fb923c; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html">🗺️ 全体マップ</a>
+        <a href="vol1.html">📘 上巻</a>
+        <a href="claude.html">🤖 ClaudeCode</a>
+        <a href="vol2.html">📝 中巻</a>
+        <a href="vol3.html" class="current">🎯 下巻</a>
+        <a href="claude-dev.html">🧠 開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 下巻：フェーズ分けとチェック実践</h1>
+            <p>Phase 0→1→2→3 の流れで安全に開発を進める方法を実践</p>
+            <div class="header-meta">
+                <span class="meta-badge meta-time">⏱️ 60〜90分</span>
+                <span class="meta-badge meta-tool">💬 ChatGPT ⇄ 🤖 ClaudeCode</span>
+            </div>
+        </div>
+
+        <!-- ゴール -->
+        <div class="section">
+            <h2 class="section-title">🎯 この巻のゴール</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>ChatGPT ⇄ ClaudeCode の往復</strong>を5回体験する</li>
+                    <li><strong>Canvas</strong>で指示を管理する方法を学ぶ</li>
+                    <li><strong>スクショで確認</strong>してから次に進む習慣をつける</li>
+                    <li><strong>複数のCSVをExcelにまとめるPythonスクリプト</strong>を作る</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 今日のプロジェクト -->
+        <div class="section">
+            <h2 class="section-title">🎯 今日作るもの</h2>
+            
+            <div class="project-box">
+                <h3>📊 複数CSVをExcel統合</h3>
+                <p>3つのCSVファイルを読み込んで、<strong>1つのExcelファイル（sales_report.xlsx）</strong>にまとめるPythonスクリプトを作ります。</p>
+                <ul>
+                    <li>1月.csv → 「1月」シート</li>
+                    <li>2月.csv → 「2月」シート</li>
+                    <li>3月.csv → 「3月」シート</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>完成イメージ</h3>
+                <div class="code-example">
+                    <code>【入力】CSVファイル3つ
+1月.csv, 2月.csv, 3月.csv
+
+【出力】sales_report.xlsx
+├─ シート「1月」: 1月.csvの内容
+├─ シート「2月」: 2月.csvの内容
+└─ シート「3月」: 3月.csvの内容</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- サイクル構造 -->
+        <div class="section">
+            <h2 class="section-title">🔄 5回の往復サイクル</h2>
+            
+            <div class="flow-diagram" style="flex-direction: column; gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <div class="phase-box phase-1" style="min-width: 180px;">
+                        <h4>💬 ChatGPT</h4>
+                        <p>Canvasに指示を書く</p>
+                    </div>
+                    <div class="phase-arrow">→</div>
+                    <div class="phase-box phase-2" style="min-width: 180px;">
+                        <h4>🤖 ClaudeCode</h4>
+                        <p>指示をコピペして実行</p>
+                    </div>
+                    <div class="phase-arrow">→</div>
+                    <div class="phase-box phase-3" style="min-width: 180px;">
+                        <h4>📸 スクショ確認</h4>
+                        <p>結果をChatGPTに送る</p>
+                    </div>
+                </div>
+                <div style="font-size: 2rem; color: #f97316;">↻ これを5回繰り返す</div>
+            </div>
+            
+            <div class="card">
+                <h3>なぜ5回も往復するの？</h3>
+                <p>いきなり「3つのCSVをまとめて！」とお願いすると、途中で失敗したときに原因がわかりません。</p>
+                <p style="margin-top: 10px;"><strong>小さく確認しながら進める</strong>ことで、どこまで成功したかがわかります。</p>
+                <p style="margin-top: 10px;">Canvasに指示を保存しておけば、いつでも修正・再実行できます。</p>
+            </div>
+        </div>
+
+        <!-- 5サイクル詳細 -->
+        <div class="section">
+            <h2 class="section-title">📋 5回のサイクル内容</h2>
+            
+            <div class="phase-detail">
+                <div class="phase-detail-header">
+                    <div class="phase-num p1">1</div>
+                    <h3 class="p1">CSVの中身を確認</h3>
+                </div>
+                <p><strong>Canvas指示：</strong>1月.csvの中身を表示して</p>
+                <p><strong>確認：</strong>文字化けせずに読めるか？</p>
+            </div>
+            
+            <div class="phase-detail">
+                <div class="phase-detail-header">
+                    <div class="phase-num p1">2</div>
+                    <h3 class="p1">1ファイルをExcelに変換</h3>
+                </div>
+                <p><strong>Canvas指示：</strong>1月.csvをtest.xlsxに出力して</p>
+                <p><strong>確認：</strong>Excelファイルができたか？</p>
+            </div>
+            
+            <div class="phase-detail">
+                <div class="phase-detail-header">
+                    <div class="phase-num p2">3</div>
+                    <h3 class="p2">シート名を設定</h3>
+                </div>
+                <p><strong>Canvas指示：</strong>シート名を「1月」にして</p>
+                <p><strong>確認：</strong>シート名が正しく設定されたか？</p>
+            </div>
+            
+            <div class="phase-detail">
+                <div class="phase-detail-header">
+                    <div class="phase-num p2">4</div>
+                    <h3 class="p2">2ファイルをまとめる</h3>
+                </div>
+                <p><strong>Canvas指示：</strong>1月と2月を1つのExcelに</p>
+                <p><strong>確認：</strong>2つのシートができたか？</p>
+            </div>
+            
+            <div class="phase-detail">
+                <div class="phase-detail-header">
+                    <div class="phase-num p3">5</div>
+                    <h3 class="p3">本番実行（3ファイル完成）</h3>
+                </div>
+                <p><strong>Canvas指示：</strong>3つ全部をsales_report.xlsxに</p>
+                <p><strong>確認：</strong>完成！3シートあるか？</p>
+            </div>
+        </div>
+
+        <!-- プロンプトセクション -->
+        <div class="prompt-section">
+            <h2>📋 ChatGPTに貼り付けるプロンプト</h2>
+            
+            <div class="prompt-instructions">
+                <ol>
+                    <li><strong>ChatGPT</strong>を開く</li>
+                    <li>下の「コピー」ボタンをクリック</li>
+                    <li>ChatGPTに貼り付けて <strong>Enter</strong></li>
+                    <li>先生と一緒に、Phase 0→1→2→3 を実践しましょう！</li>
+                </ol>
+            </div>
+            
+            <div class="prompt-box">
+                <pre id="prompt-text">あなたは「Takagi Flow のフェーズ分け」を教える優しい先生です。
+今から生徒に、ChatGPTとClaudeCodeを往復しながら開発する方法を教えます。
+
+【今日のプロジェクト】
+「3つのCSVファイルを1つのExcelにまとめるPythonスクリプト」
+
+【完成イメージ】
+- 入力：1月.csv, 2月.csv, 3月.csv
+- 出力：sales_report.xlsx
+  - 「1月」シートに1月.csvの内容
+  - 「2月」シートに2月.csvの内容
+  - 「3月」シートに3月.csvの内容
+
+【あなたのルール】
+- Canvasを使って指示書を作成・更新する
+- 生徒はCanvasの内容をClaudeCodeにコピペして実行する
+- 実行結果は必ずスクリーンショットで見せてもらう
+- スクショを確認してからCanvasを次のステップに更新する
+- 合計5回の「Canvas→ClaudeCode→スクショ確認」サイクルを行う
+
+【学習の流れ】
+ChatGPT(Canvas作成) → ClaudeCode(実行) → ChatGPT(スクショ確認)
+これを5回繰り返す！
+
+=====================================
+■ 準備：CSV ファイルを作る
+=====================================
+1. 今日のプロジェクトを説明
+   - 3つのCSVファイルを1つのExcelにまとめる
+   - ChatGPTとClaudeCodeを5回往復する練習
+2. testフォルダの中に、CSVファイル3つを作ってもらう
+   - 1月.csv の内容：
+     ```
+     商品名,金額
+     りんご,100
+     みかん,80
+     バナナ,120
+     ```
+   - 2月.csv の内容：
+     ```
+     商品名,金額
+     りんご,110
+     みかん,90
+     バナナ,130
+     ```
+   - 3月.csv の内容：
+     ```
+     商品名,金額
+     りんご,120
+     みかん,100
+     バナナ,140
+     ```
+   - 作り方：メモ帳で作成 → 「名前を付けて保存」→ ファイル名「1月.csv」（文字コードUTF-8）
+3. 確認：「CSVファイル3つができましたか？testフォルダのスクショを見せてください」
+4. スクショを確認したら、最初のCanvasを作成する
+
+=====================================
+■ サイクル1：CSVの中身を確認する
+=====================================
+【目的】ClaudeCodeでファイルが読めるか確認
+
+1. Canvasを新規作成して、以下の指示を書く：
+---
+【指示1】CSVファイルの確認
+
+1月.csv の中身を表示してください。
+文字化けしていないか確認したいです。
+---
+
+2. 生徒に伝える：
+   「Canvasに指示を書きました。この内容をClaudeCodeにコピペして実行してください」
+
+3. 実行後、結果のスクショを送ってもらう
+   - 確認ポイント：「商品名,金額」「りんご,100」などが見えるか
+   - 文字化けしていないか
+
+4. スクショを確認したら：
+   「OK！CSVが正しく読めていますね。次のステップに進みます」
+
+=====================================
+■ サイクル2：1ファイルをExcelに変換
+=====================================
+【目的】まず1ファイルだけで動作確認
+
+1. Canvasを更新して、以下の指示に書き換える：
+---
+【指示2】1ファイルをExcelに変換
+
+1月.csv を読み込んで、test.xlsx に出力してください。
+Pythonで、pandasとopenpyxlを使ってください。
+---
+
+2. 生徒に伝える：
+   「Canvasを更新しました。また ClaudeCode にコピペして実行してください」
+
+3. 実行後、結果のスクショを送ってもらう
+   - 確認ポイント：test.xlsx ができたか
+   - Excelを開いてデータが入っているか
+
+4. スクショを確認したら：
+   「OK！Excelファイルができましたね。でもシート名がまだ設定されていません。次で直しましょう」
+
+=====================================
+■ サイクル3：シート名を設定する
+=====================================
+【目的】シート名を「1月」に変更
+
+1. Canvasを更新して、以下の指示に書き換える：
+---
+【指示3】シート名を設定
+
+1月.csv を読み込んで、test.xlsx に出力してください。
+シート名は「1月」にしてください。
+Pythonで、pandasとopenpyxlを使ってください。
+---
+
+2. 生徒に伝える：
+   「Canvasを更新しました。シート名の指定を追加しました。ClaudeCodeで実行してください」
+
+3. 実行後、結果のスクショを送ってもらう
+   - 確認ポイント：シート名が「1月」になっているか
+   - Excelの下のタブを確認
+
+4. スクショを確認したら：
+   「OK！シート名が『1月』になりましたね。次は2つ目のCSVも追加しましょう」
+
+=====================================
+■ サイクル4：2ファイルをまとめる
+=====================================
+【目的】複数シートの作成を確認
+
+1. Canvasを更新して、以下の指示に書き換える：
+---
+【指示4】2ファイルをまとめる
+
+1月.csv と 2月.csv を読み込んで、test.xlsx に出力してください。
+- 1月.csv → 「1月」シート
+- 2月.csv → 「2月」シート
+Pythonで、pandasとopenpyxlを使ってください。
+---
+
+2. 生徒に伝える：
+   「Canvasを更新しました。2つのCSVを1つのExcelにまとめます。ClaudeCodeで実行してください」
+
+3. 実行後、結果のスクショを送ってもらう
+   - 確認ポイント：シートが2つあるか（1月、2月）
+   - 各シートに正しいデータが入っているか
+
+4. スクショを確認したら：
+   「OK！2つのシートができましたね。いよいよ最後、3ファイル全部をまとめましょう！」
+
+=====================================
+■ サイクル5：本番実行（3ファイル完成）
+=====================================
+【目的】最終成果物を完成させる
+
+1. Canvasを更新して、以下の指示に書き換える：
+---
+【指示5】本番実行 - 3ファイルをまとめる
+
+1月.csv, 2月.csv, 3月.csv を読み込んで、
+sales_report.xlsx に出力してください。
+
+- 1月.csv → 「1月」シート
+- 2月.csv → 「2月」シート  
+- 3月.csv → 「3月」シート
+
+Pythonで、pandasとopenpyxlを使ってください。
+---
+
+2. 生徒に伝える：
+   「これが最後の指示です！本番ファイル sales_report.xlsx を作ります。ClaudeCodeで実行してください」
+
+3. 実行後、結果のスクショを送ってもらう
+   - 確認ポイント：sales_report.xlsx ができたか
+   - 3つのシート（1月、2月、3月）があるか
+   - 各シートに正しいデータが入っているか
+
+4. スクショを確認したら：
+   「完璧です！おめでとうございます！」
+
+=====================================
+■ まとめ
+=====================================
+1. 今日やった5回のサイクルを振り返る：
+   - サイクル1：CSVの中身を確認
+   - サイクル2：1ファイルをExcel変換
+   - サイクル3：シート名を設定
+   - サイクル4：2ファイルをまとめる
+   - サイクル5：3ファイル全部で本番完成
+
+2. 学んだこと：
+   - ChatGPTのCanvasで指示を管理する
+   - ClaudeCodeで実行する
+   - 結果をスクショでChatGPTに見せる
+   - 少しずつ指示を育てていく
+   - 一気にやらない！小さく確認しながら進める
+
+3. この流れが Takagi Flow の基本！
+   「Canvas → ClaudeCode → スクショ確認」を繰り返す
+
+4. Takagi Flow 全巻修了おめでとう！
+5. 次のステップ：「開発モード」で実際の開発に使う
+
+=====================================
+【重要ルール】
+=====================================
+- 必ずCanvasを使って指示を書く
+- 生徒がスクショを送るまで次に進まない
+- スクショを確認してからCanvasを更新する
+- 5回のサイクルを必ず体験させる
+- 急がない、1つずつ確実に進める
+
+それでは、準備（CSVファイル作成）から始めてください！</pre>
+            </div>
+            
+            <button class="copy-btn" onclick="copyPrompt()">📋 プロンプトをコピーする</button>
+        </div>
+
+        <!-- ヒント -->
+        <div class="section">
+            <h2 class="section-title">💡 ヒント</h2>
+            
+            <div class="highlight-box">
+                <h4>✅ 往復サイクルのコツ</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li><strong>Canvasに指示を書く</strong>（履歴が残る）</li>
+                    <li><strong>スクショは必ず送る</strong>（確認してもらう）</li>
+                    <li><strong>1サイクル1つの変更</strong>だけにする</li>
+                    <li>うまくいかなければ前のCanvasに戻る</li>
+                </ul>
+            </div>
+            
+            <div class="warning-box">
+                <h4>⚠️ よくある失敗</h4>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #94a3b8;">
+                    <li><strong>「スクショを送らずに次へ進む」</strong> → 必ず確認してから！</li>
+                    <li><strong>「一気に全部やろうとする」</strong> → 1つずつ確実に！</li>
+                    <li><strong>「Canvasを使わない」</strong> → 履歴が残らないと戻れない！</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 修了 -->
+        <div class="complete-box">
+            <h3>🎉 Takagi Flow 全巻修了！</h3>
+            <p>おめでとうございます！<br>これであなたは Takagi Flow の基本をマスターしました。</p>
+            <p style="margin-top: 15px;">実際の開発で使うときは「開発モード」を使いましょう。</p>
+            <div style="margin-top: 20px;">
+                <a href="claude-dev.html" class="complete-btn">🧠 開発モードへ →</a>
+                <a href="index.html" class="complete-btn secondary">← 全体マップに戻る</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html">← 全体マップに戻る</a></p>
+            <p style="margin-top: 10px;">作成：2025年12月 | 高木産業株式会社</p>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt() {
+            const promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ コピーしました！';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 プロンプトをコピーする';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

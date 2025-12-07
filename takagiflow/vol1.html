@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📘 上巻：Takagi Flow 入門 | Takagi Flow 学習ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; color: #e8e8e8;
+        }
+        
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            padding: 12px 20px;
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+        }
+        .nav a {
+            padding: 8px 16px; border-radius: 8px;
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav a.current { background: #3b82f6; color: #fff; }
+        .nav a:not(.current) { background: rgba(255,255,255,0.1); color: #94a3b8; }
+        .nav a:not(.current):hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header {
+            text-align: center; margin-bottom: 40px;
+            padding-bottom: 30px; border-bottom: 2px solid #3b82f6;
+        }
+        .header h1 { font-size: 2rem; color: #60a5fa; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 1rem; }
+        .header-meta { margin-top: 15px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .meta-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .meta-time { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .meta-tool { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.4rem; color: #60a5fa; margin-bottom: 20px;
+            padding-left: 15px; border-left: 4px solid #3b82f6;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 12px;
+            padding: 25px; margin-bottom: 20px;
+        }
+        .card h3 { color: #f1f5f9; margin-bottom: 15px; font-size: 1.15rem; }
+        .card p { color: #cbd5e1; line-height: 1.8; margin-bottom: 10px; }
+        .card ul, .card ol { margin-left: 25px; color: #cbd5e1; line-height: 2; }
+        
+        /* 3原則カード */
+        .principles {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            margin: 30px 0;
+        }
+        @media (max-width: 768px) { .principles { grid-template-columns: 1fr; } }
+        .principle {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid #334155; border-radius: 16px;
+            padding: 25px; text-align: center;
+            transition: all 0.3s ease;
+        }
+        .principle:hover { border-color: #3b82f6; transform: translateY(-5px); }
+        .principle-num {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff; font-size: 1.5rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px;
+        }
+        .principle h4 { color: #60a5fa; font-size: 1.2rem; margin-bottom: 10px; }
+        .principle p { color: #94a3b8; font-size: 0.95rem; margin: 0; }
+        
+        /* 具体例ボックス */
+        .example-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px; padding: 20px; margin: 15px 0;
+        }
+        .example-box h4 { color: #60a5fa; margin-bottom: 10px; font-size: 1rem; }
+        .example-box p { color: #cbd5e1; margin: 0; }
+        
+        .bad-example {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .bad-example h4 { color: #f87171; }
+        
+        .good-example {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .good-example h4 { color: #34d399; }
+        
+        /* フロー図 */
+        .flow-overview {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 16px;
+            padding: 30px; margin: 20px 0;
+        }
+        .flow-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; flex-wrap: wrap; margin: 20px 0;
+        }
+        .flow-box {
+            padding: 15px 25px; border-radius: 10px;
+            text-align: center; font-weight: 600;
+        }
+        .flow-chatgpt { background: #3b82f6; color: #fff; }
+        .flow-claude { background: #8b5cf6; color: #fff; }
+        .flow-result { background: #10b981; color: #fff; }
+        .flow-arrow { font-size: 1.5rem; color: #60a5fa; }
+        .flow-label { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
+        
+        /* 4項目プレビュー */
+        .canvas-preview {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) { .canvas-preview { grid-template-columns: 1fr; } }
+        .canvas-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #334155; border-radius: 10px;
+            padding: 15px;
+        }
+        .canvas-item h5 { color: #60a5fa; font-size: 0.95rem; margin-bottom: 8px; }
+        .canvas-item p { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+        
+        /* プロンプトセクション */
+        .prompt-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            border-radius: 16px; padding: 30px; margin: 30px 0;
+        }
+        .prompt-section h2 {
+            color: #60a5fa; font-size: 1.3rem; margin-bottom: 20px; text-align: center;
+        }
+        .prompt-instructions {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px; padding: 15px; margin-bottom: 20px;
+        }
+        .prompt-instructions ol { color: #cbd5e1; margin-left: 20px; line-height: 2; }
+        .prompt-instructions strong { color: #60a5fa; }
+        .prompt-box {
+            background: #0f172a; border: 1px solid #334155;
+            border-radius: 10px; padding: 20px;
+            max-height: 500px; overflow-y: auto; margin-bottom: 20px;
+        }
+        .prompt-box pre {
+            color: #e2e8f0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;
+        }
+        .copy-btn {
+            display: block; width: 100%; padding: 15px 30px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white; border: none; border-radius: 10px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4); }
+        .copy-btn.copied { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        .highlight-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .highlight-box h4 { color: #fbbf24; margin-bottom: 10px; }
+        
+        .next-step {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(109, 40, 217, 0.15));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 16px; padding: 30px; text-align: center; margin-top: 40px;
+        }
+        .next-step h3 { color: #a78bfa; margin-bottom: 15px; }
+        .next-step p { color: #94a3b8; margin-bottom: 20px; }
+        .next-btn {
+            display: inline-block; padding: 12px 30px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white; border-radius: 10px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease;
+        }
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4); }
+        
+        .footer {
+            text-align: center; color: #64748b;
+            margin-top: 50px; padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        .footer a { color: #60a5fa; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="index.html">🗺️ 全体マップ</a>
+        <a href="vol1.html" class="current">📘 上巻</a>
+        <a href="claude.html">🤖 ClaudeCode</a>
+        <a href="vol2.html">📝 中巻</a>
+        <a href="vol3.html">🎯 下巻</a>
+        <a href="claude-dev.html">🧠 開発モード</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>📘 上巻：Takagi Flow 入門</h1>
+            <p>AIと協働する開発手法「Takagi Flow」の考え方を学ぶ</p>
+            <div class="header-meta">
+                <span class="meta-badge meta-time">⏱️ 30〜45分</span>
+                <span class="meta-badge meta-tool">💬 ChatGPTのみ</span>
+            </div>
+        </div>
+
+        <!-- ゴール -->
+        <div class="section">
+            <h2 class="section-title">🎯 この巻のゴール</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Takagi Flow とは何か</strong>を理解する</li>
+                    <li><strong>3原則</strong>の意味と重要性を理解する</li>
+                    <li><strong>ChatGPT（設計）+ ClaudeCode（実行）</strong>の役割分担を知る</li>
+                    <li><strong>4項目の指示書</strong>の概要を把握する</li>
+                    <li>わからないことは<strong>質問して解決</strong>する習慣をつける</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Takagi Flowとは -->
+        <div class="section">
+            <h2 class="section-title">❓ Takagi Flow とは</h2>
+            
+            <div class="card">
+                <h3>AIと一緒に「安全に」開発する方法</h3>
+                <p>Takagi Flowは、AIを使ってプログラムやファイル操作を行うときに、<strong>失敗しても被害を最小限に抑える</strong>ための開発手法です。</p>
+                <p style="margin-top: 15px;">AIは便利ですが、いきなり「全部やって！」とお願いすると、間違った方向に大量の作業をしてしまうことがあります。</p>
+                <p style="margin-top: 15px;">Takagi Flowでは、<strong>「小さく試して、確認して、少しずつ進める」</strong>ことで、いつでも安全に戻れる状態を保ちます。</p>
+            </div>
+            
+            <div class="card">
+                <h3>なぜ「Takagi Flow」という名前？</h3>
+                <p>高木産業で生まれた開発手法だから「Takagi」。</p>
+                <p style="margin-top: 10px;">「Flow」は、ChatGPTとClaudeCodeを<strong>行ったり来たりする流れ</strong>を表しています。</p>
+            </div>
+        </div>
+
+        <!-- 3原則 -->
+        <div class="section">
+            <h2 class="section-title">🔑 Takagi Flow の3原則</h2>
+            
+            <div class="principles">
+                <div class="principle">
+                    <div class="principle-num">1</div>
+                    <h4>小さく分ける</h4>
+                    <p>大きな作業は<br>小さなステップに分解</p>
+                </div>
+                <div class="principle">
+                    <div class="principle-num">2</div>
+                    <h4>毎回確認する</h4>
+                    <p>1ステップ終わったら<br>必ず結果をチェック</p>
+                </div>
+                <div class="principle">
+                    <div class="principle-num">3</div>
+                    <h4>失敗したら戻る</h4>
+                    <p>うまくいかなければ<br>前のステップに戻る</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 原則1の詳細 -->
+        <div class="section">
+            <h2 class="section-title">📖 原則1：小さく分ける</h2>
+            
+            <div class="card">
+                <h3>なぜ小さく分けるのか？</h3>
+                <p>AIに「100個のファイルを処理して」とお願いして失敗した場合、<strong>どこで失敗したかわかりません</strong>。</p>
+                <p style="margin-top: 10px;">でも「まず3個だけ処理して」なら、失敗しても影響は3個だけ。<strong>原因も特定しやすい</strong>です。</p>
+            </div>
+            
+            <div class="bad-example example-box">
+                <h4>❌ 悪い例</h4>
+                <p>「フォルダ内の100個のExcelファイルを全部処理して、結合して、グラフを作って、PDFにして」</p>
+            </div>
+            
+            <div class="good-example example-box">
+                <h4>✅ 良い例（小さく分ける）</h4>
+                <p>① まず1個のExcelファイルを読めるか確認<br>
+                   ② 3個のファイルを結合してみる<br>
+                   ③ グラフを1つ作ってみる<br>
+                   ④ うまくいったら100個に拡大</p>
+            </div>
+        </div>
+
+        <!-- 原則2の詳細 -->
+        <div class="section">
+            <h2 class="section-title">📖 原則2：毎回確認する</h2>
+            
+            <div class="card">
+                <h3>なぜ毎回確認するのか？</h3>
+                <p>AIは「できました！」と言っても、<strong>本当にできているとは限りません</strong>。</p>
+                <p style="margin-top: 10px;">必ず自分の目で結果を確認して、「成功した状態」と照らし合わせましょう。</p>
+            </div>
+            
+            <div class="card">
+                <h3>確認の方法</h3>
+                <ul>
+                    <li><strong>ファイルができたか？</strong> → エクスプローラーで確認</li>
+                    <li><strong>中身は正しいか？</strong> → 開いて確認</li>
+                    <li><strong>スクショをChatGPTに送る</strong> → 先生に見てもらう</li>
+                </ul>
+            </div>
+            
+            <div class="highlight-box">
+                <h4>💡 スクショが大事！</h4>
+                <p style="color: #cbd5e1;">結果をスクリーンショットでChatGPTに送ると、「これで合っていますか？」と確認できます。目視だけでなく、<strong>AIにも確認してもらう</strong>のがTakagi Flowの特徴です。</p>
+            </div>
+        </div>
+
+        <!-- 原則3の詳細 -->
+        <div class="section">
+            <h2 class="section-title">📖 原則3：失敗したら戻る</h2>
+            
+            <div class="card">
+                <h3>なぜ戻ることが大事なのか？</h3>
+                <p>失敗したとき、「どうにか直そう」とすると、<strong>さらに状況が悪化する</strong>ことがあります。</p>
+                <p style="margin-top: 10px;">Takagi Flowでは、失敗したら<strong>「うまくいっていたところまで戻る」</strong>のが基本です。</p>
+            </div>
+            
+            <div class="card">
+                <h3>戻り方の例</h3>
+                <ul>
+                    <li><strong>ファイルが壊れた</strong> → バックアップから復元</li>
+                    <li><strong>コードが動かない</strong> → 前の指示書に戻って修正</li>
+                    <li><strong>何が悪いかわからない</strong> → 1つ前のステップからやり直す</li>
+                </ul>
+            </div>
+            
+            <div class="good-example example-box">
+                <h4>✅ 「戻れる」という安心感</h4>
+                <p>小さく分けて進めているから、失敗しても「ここまでは成功していた」がわかる。<br>だから安心して挑戦できる。これがTakagi Flowの強みです。</p>
+            </div>
+        </div>
+
+        <!-- ChatGPT + ClaudeCode の役割 -->
+        <div class="section">
+            <h2 class="section-title">🔄 ChatGPT と ClaudeCode の役割</h2>
+            
+            <div class="flow-overview">
+                <h3 style="color: #f1f5f9; text-align: center; margin-bottom: 20px;">2つのAIの役割分担</h3>
+                
+                <div class="flow-row">
+                    <div>
+                        <div class="flow-box flow-chatgpt">💬 ChatGPT</div>
+                        <div class="flow-label">設計・相談役</div>
+                    </div>
+                    <div class="flow-arrow">⇄</div>
+                    <div>
+                        <div class="flow-box flow-claude">🤖 ClaudeCode</div>
+                        <div class="flow-label">実行・作業者</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div class="card" style="margin: 0;">
+                        <h3 style="color: #60a5fa;">💬 ChatGPTの役割</h3>
+                        <ul>
+                            <li>何をしたいか整理する</li>
+                            <li>指示書（Canvas）を作る</li>
+                            <li>結果を確認する</li>
+                            <li>失敗時にアドバイスする</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="margin: 0;">
+                        <h3 style="color: #a78bfa;">🤖 ClaudeCodeの役割</h3>
+                        <ul>
+                            <li>実際にファイルを作る</li>
+                            <li>プログラムを実行する</li>
+                            <li>フォルダを操作する</li>
+                            <li>Pythonスクリプトを動かす</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>なぜ2つのAIを使うのか？</h3>
+                <p><strong>ChatGPTだけ</strong>では、会話はできても実際のファイル操作ができません。</p>
+                <p style="margin-top: 10px;"><strong>ClaudeCodeだけ</strong>では、いきなり実行してしまい、失敗時のフォローが難しいです。</p>
+                <p style="margin-top: 10px;">ChatGPTで<strong>「考えて、整理して」</strong>から、ClaudeCodeで<strong>「実行する」</strong>。この流れが安全な開発を実現します。</p>
+            </div>
+        </div>
+
+        <!-- 4項目の指示書 -->
+        <div class="section">
+            <h2 class="section-title">📋 4項目の指示書（Canvas）</h2>
+            
+            <div class="card">
+                <h3>AIに作業をお願いするときの「設計図」</h3>
+                <p>Takagi Flowでは、いきなりお願いせず、まず<strong>4項目の指示書</strong>を作ります。</p>
+                <p style="margin-top: 10px;">この指示書をChatGPTの<strong>Canvas機能</strong>に保存しておけば、いつでも修正・再利用できます。</p>
+            </div>
+            
+            <div class="canvas-preview">
+                <div class="canvas-item">
+                    <h5>1. やりたいこと</h5>
+                    <p>何をしたいのか、一言で</p>
+                </div>
+                <div class="canvas-item">
+                    <h5>2. 目的</h5>
+                    <p>なぜそれをするのか</p>
+                </div>
+                <div class="canvas-item">
+                    <h5>3. 成功した状態</h5>
+                    <p>どうなったらOKか</p>
+                </div>
+                <div class="canvas-item">
+                    <h5>4. AIへのお願い</h5>
+                    <p>使う技術やルール</p>
+                </div>
+            </div>
+            
+            <div class="example-box">
+                <h4>📝 指示書の例</h4>
+                <p><strong>【やりたいこと】</strong>フォルダ内のファイル一覧をExcelに出力したい</p>
+                <p><strong>【目的】</strong>ファイルの整理状況を把握したい</p>
+                <p><strong>【成功した状態】</strong>filelist.xlsx ができて、ファイル名・サイズ・更新日時が入っている</p>
+                <p><strong>【AIへのお願い】</strong>Pythonで作成、openpyxlを使用</p>
+            </div>
+        </div>
+
+        <!-- プロンプトセクション -->
+        <div class="prompt-section">
+            <h2>📋 ChatGPTに貼り付けるプロンプト</h2>
+            
+            <div class="prompt-instructions">
+                <ol>
+                    <li><strong>ChatGPT</strong>（https://chat.openai.com/）を開く</li>
+                    <li>下の「コピー」ボタンをクリック</li>
+                    <li>ChatGPTに貼り付けて <strong>Enter</strong></li>
+                    <li>先生と対話しながら、Takagi Flowを深く理解しましょう！</li>
+                </ol>
+            </div>
+            
+            <div class="prompt-box">
+                <pre id="prompt-text">あなたは「Takagi Flow」を教える先生です。
+生徒はChatGPTの基本操作はできる人です。
+今から、Takagi Flowの考え方を深く理解してもらう対話をしてください。
+
+【あなたのルール】
+- 一方的に説明せず、生徒に考えさせる質問を投げる
+- 生徒が「わからない」と言ったら、丁寧に説明する
+- 具体例を使って説明する
+- 各セクションの終わりに「ここまでで質問はありますか？」と聞く
+- 質問があれば回答してから次に進む
+- 質問がなければ次のセクションへ進む
+
+【Takagi Flowの3原則】
+1. 小さく分ける：大きな作業を小さなステップに分解する
+2. 毎回確認する：1ステップ終わったら必ず結果をチェックする
+3. 失敗したら戻る：うまくいかなければ前のステップに戻る
+
+【教える内容】
+
+■ セクション1：導入（5分）
+1. 挨拶をして、今日の学習内容を伝える
+2. 生徒に質問：「AIに作業をお願いして、うまくいかなかった経験はありますか？」
+3. 回答を聞いて共感する
+4. Takagi Flowがその問題を解決する方法であることを伝える
+5. 確認：「ここまでで質問はありますか？」
+
+■ セクション2：原則1「小さく分ける」（10分）
+1. 質問：「100個のファイルを一気に処理するのと、まず3個だけ試すの、どちらが安全だと思いますか？」
+2. 回答を聞いて、「小さく分ける」の意味を説明
+3. 具体例：
+   - 悪い例：「100個のExcelを全部処理して」
+   - 良い例：「まず1個読めるか確認」→「3個結合してみる」→「100個に拡大」
+4. 質問：「普段の仕事で、小さく分けられそうな作業はありますか？」
+5. 回答を聞いてフィードバック
+6. 確認：「原則1について質問はありますか？」
+
+■ セクション3：原則2「毎回確認する」（10分）
+1. 質問：「AIが『できました！』と言ったら、それを信じますか？」
+2. 回答を聞いて、確認の重要性を説明
+3. 確認の方法を紹介：
+   - ファイルができたか → エクスプローラーで確認
+   - 中身は正しいか → 開いて確認
+   - スクショをChatGPTに送る → AIにも確認してもらう
+4. 質問：「スクショを送って確認してもらうメリットは何だと思いますか？」
+5. 回答を聞いてフィードバック
+6. 確認：「原則2について質問はありますか？」
+
+■ セクション4：原則3「失敗したら戻る」（10分）
+1. 質問：「作業が失敗したとき、『どうにか直そう』とするとどうなりますか？」
+2. 回答を聞いて、「戻る」ことの重要性を説明
+3. 戻り方の例：
+   - バックアップから復元
+   - 前の指示書に戻って修正
+   - 1つ前のステップからやり直す
+4. ポイント：小さく分けているから、どこまで成功したかわかる
+5. 質問：「『戻れる』という安心感があると、挑戦しやすくなりませんか？」
+6. 回答を聞いてフィードバック
+7. 確認：「原則3について質問はありますか？」
+
+■ セクション5：ChatGPTとClaudeCodeの役割（10分）
+1. 役割分担を説明：
+   - ChatGPT：設計・相談役（考える、整理する、確認する）
+   - ClaudeCode：実行・作業者（ファイル操作、プログラム実行）
+2. 質問：「なぜ2つのAIを使い分けると思いますか？」
+3. 回答を聞いてフィードバック
+4. 流れを説明：
+   ChatGPTで指示書を作る → ClaudeCodeで実行 → ChatGPTでスクショ確認 → 繰り返し
+5. 確認：「この役割分担について質問はありますか？」
+
+■ セクション6：4項目の指示書（10分）
+1. 指示書の4項目を説明：
+   - やりたいこと：何をしたいか一言で
+   - 目的：なぜそれをするのか
+   - 成功した状態：どうなったらOKか
+   - AIへのお願い：使う技術やルール
+2. 具体例を見せる
+3. 質問：「なぜ『成功した状態』を事前に決めておくと思いますか？」
+4. 回答を聞いてフィードバック
+5. 練習：「自分の仕事で作りたいものを1つ思い浮かべて、4項目を埋めてみてください」
+6. 生徒が書いた内容にフィードバック
+7. 確認：「指示書について質問はありますか？」
+
+■ セクション7：まとめ（5分）
+1. 3原則を復習：
+   - 小さく分ける
+   - 毎回確認する
+   - 失敗したら戻る
+2. 今日学んだことを振り返る
+3. 質問：「今日の内容で、一番印象に残ったことは何ですか？」
+4. 回答を聞いて褒める
+5. 次の「ClaudeCode章」の予告
+6. 最後に：「他に質問があれば、いつでも聞いてください！」
+
+【重要ルール】
+- 生徒が「わからない」「もう一度説明して」と言ったら、必ず丁寧に説明し直す
+- 「質問はありますか？」と聞いて、あれば必ず回答する
+- 質問がないことを確認してから次に進む
+- 急がない、理解を優先する
+
+それでは、セクション1の挨拶から始めてください！</pre>
+            </div>
+            
+            <button class="copy-btn" onclick="copyPrompt()">📋 プロンプトをコピーする</button>
+        </div>
+
+        <!-- ヒント -->
+        <div class="section">
+            <h2 class="section-title">💡 学習のヒント</h2>
+            
+            <div class="highlight-box">
+                <h4>❓ わからないことは必ず質問しよう</h4>
+                <p style="color: #cbd5e1;">ChatGPTの先生は「質問はありますか？」と聞いてきます。</p>
+                <p style="color: #cbd5e1; margin-top: 10px;">わからないことがあれば<strong>「〇〇がわかりません」「もう一度説明して」</strong>と言ってください。</p>
+                <p style="color: #cbd5e1; margin-top: 10px;">質問することは恥ずかしいことではありません。<strong>理解することが大事</strong>です。</p>
+            </div>
+            
+            <div class="card">
+                <h3>質問の例</h3>
+                <ul>
+                    <li>「小さく分けるって、具体的にどれくらいの大きさ？」</li>
+                    <li>「スクショを送るタイミングがわからない」</li>
+                    <li>「ClaudeCodeはどこからダウンロードするの？」</li>
+                    <li>「Canvasって何？」</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 次へ -->
+        <div class="next-step">
+            <h3>🎉 上巻を終えたら</h3>
+            <p>Takagi Flowの考え方を理解したら、<br>次は「ClaudeCode」をインストールしましょう！</p>
+            <a href="claude.html" class="next-btn">🤖 ClaudeCode章へ進む →</a>
+        </div>
+
+        <div class="footer">
+            <p><a href="index.html">← 全体マップに戻る</a></p>
+            <p style="margin-top: 10px;">作成：2025年12月 | 高木産業株式会社</p>
+        </div>
+    </div>
+
+    <script>
+        function copyPrompt() {
+            const promptText = document.getElementById('prompt-text').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ コピーしました！';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = '📋 プロンプトをコピーする';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
