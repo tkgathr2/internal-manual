@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eightでメールが開かないときの復旧手順</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .intro {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .intro-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            border-color: #4285f4;
+            box-shadow: 0 5px 20px rgba(66, 133, 244, 0.15);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #4285f4 0%, #5a95f5 100%);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .step-title {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .step-content {
+            margin-left: 60px;
+        }
+        
+        .step-content ol {
+            padding-left: 20px;
+        }
+        
+        .step-content li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .purpose-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+        
+        .purpose-box::before {
+            content: '💡 ';
+        }
+        
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            word-break: break-all;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .code-box:hover {
+            background: #3d3d3d;
+        }
+        
+        .code-box::after {
+            content: '📋 クリックでコピー';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: #888;
+        }
+        
+        .link-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ea4335 0%, #f66 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(234, 67, 53, 0.3);
+        }
+        
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 67, 53, 0.4);
+        }
+        
+        .link-btn.gmail {
+            background: linear-gradient(135deg, #4285f4 0%, #5a95f5 100%);
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+        
+        .link-btn.gmail:hover {
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+        
+        .link-btn.eight {
+            background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .link-btn.eight:hover {
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .link-btn.complete {
+            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            font-size: 1.1rem;
+            padding: 15px 30px;
+        }
+        
+        .link-btn.complete:hover {
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .important-note {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .important-note .icon {
+            font-size: 1.5rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .check-box {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .check-box-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .check-ok {
+            color: #388e3c;
+            margin-bottom: 8px;
+        }
+        
+        .check-ng {
+            color: #d32f2f;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #34a853 0%, #4caf50 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .success-box h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        
+        /* ChatGPTヘルプセクション */
+        .help-section {
+            background: linear-gradient(135deg, #10a37f 0%, #1a7f64 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .help-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .help-section p {
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+        
+        .chatgpt-btn {
+            display: inline-block;
+            background: white;
+            color: #10a37f;
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .chatgpt-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        /* コピー成功メッセージ */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .copy-toast.show {
+            opacity: 1;
+        }
+        
+        /* ChatGPT固定ボタン */
+        .chatgpt-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #10a37f 0%, #1a7f64 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 20px rgba(16, 163, 127, 0.4);
+            z-index: 999;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chatgpt-float:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(16, 163, 127, 0.5);
+        }
+        
+        @media (max-width: 600px) {
+            .chatgpt-float {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* ヘルプボタン（各ステップ用） */
+        .help-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #10a37f 0%, #1a7f64 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(16, 163, 127, 0.3);
+        }
+        
+        .help-copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.4);
+        }
+        
+        .help-copy-btn::before {
+            content: '🤖';
+            margin-right: 6px;
+        }
+        
+        .step-help-text {
+            display: none;
+        }
+        
+        .sub-step {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .step-content {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+            
+            .code-box::after {
+                display: none;
+            }
+            
+            header h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 Eightでメールが開かないときの復旧手順</h1>
+            <p>スタッフ向け簡易マニュアル</p>
+        </header>
+        
+        <div class="content">
+            <div class="intro">
+                <span class="intro-icon">💡</span>
+                <strong>原因：</strong>Eight のメールボタンを押しても反応しない場合、PC（Windows）の「mailto設定」が壊れているのが原因です。<br>
+                以下の手順で<strong>必ず復旧できます</strong>。
+            </div>
+            
+            <!-- STEP 1 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Windows の「MAILTO」の既定アプリを Chrome に設定する</div>
+                </div>
+                <div class="step-content">
+                    <div class="purpose-box">
+                        <strong>何をする？</strong><br>
+                        メールのリンクをクリックしたとき、ChromeブラウザでGmailが開くようにする設定です。
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <strong>Windowsの「設定」を開く</strong>
+                            <div class="sub-step">
+                                画面左下の <strong>スタートボタン（Windowsマーク）</strong> をクリック →<br>
+                                <strong>⚙️ 歯車アイコン（設定）</strong> をクリック
+                            </div>
+                        </li>
+                        <li>
+                            <strong>「アプリ」をクリック</strong>
+                            <div class="sub-step">
+                                設定画面の左側メニューから「アプリ」を探してクリック
+                            </div>
+                        </li>
+                        <li>
+                            <strong>「既定のアプリ」をクリック</strong>
+                            <div class="sub-step">
+                                アプリの画面で「既定のアプリ」を探してクリック
+                            </div>
+                        </li>
+                        <li>
+                            <strong>「リンクの種類で既定値を選択する」をクリック</strong>
+                            <div class="sub-step">
+                                画面を下にスクロールすると見つかります
+                            </div>
+                        </li>
+                        <li>
+                            <strong>検索窓に「MAILTO」と入力</strong>
+                            <div class="sub-step">
+                                上部の検索窓に MAILTO と入力して検索
+                            </div>
+                        </li>
+                        <li>
+                            <strong>「Google Chrome」を選んで「常に使う」をクリック</strong>
+                            <div class="sub-step">
+                                MAILTOの項目をクリック → 一覧から Google Chrome を選択 → 「常に使う」
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="check-box">
+                        <div class="check-box-title">🔍 確認ポイント</div>
+                        <p class="check-ok">✅ MAILTOの横に「Google Chrome」と表示されていればOK！</p>
+                        <p class="check-ng">❌ 別のアプリが表示されている場合は、やり直してください</p>
+                    </div>
+                    
+                    <button class="help-copy-btn" onclick="copyStepHelp(1)">この手順をコピーしてChatGPTに質問</button>
+                    <div class="step-help-text" id="step1-help">【Eightメール復旧】ステップ1で困っています。
+
+現在やっていること：
+「Windows の MAILTO の既定アプリを Chrome に設定する」
+（メールリンクをクリックしたときにChromeでGmailが開くようにする設定）
+
+手順：
+1. 画面左下のスタートボタン → ⚙️歯車アイコン（設定）をクリック
+2. 「アプリ」をクリック
+3. 「既定のアプリ」をクリック
+4. 「リンクの種類で既定値を選択する」をクリック
+5. 検索窓に MAILTO と入力
+6. Google Chrome を選んで「常に使う」をクリック
+
+困っている内容：
+（ここに具体的に何がわからないか、どこでつまずいているかを書いてください）</div>
+                </div>
+            </div>
+            
+            <!-- STEP 2 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Chrome の mailto ブロック設定を解除する</div>
+                </div>
+                <div class="step-content">
+                    <div class="purpose-box">
+                        <strong>何をする？</strong><br>
+                        Chromeが「Gmailでメールを開くこと」をブロックしていないか確認し、ブロックされていたら解除します。
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <strong>Chromeブラウザを開く</strong>
+                            <div class="sub-step">
+                                デスクトップやタスクバーにある Chrome（丸い赤・黄・緑・青のアイコン）をクリック
+                            </div>
+                        </li>
+                        <li>
+                            <strong>以下のURLをChromeのアドレスバーにコピーして開く</strong>
+                            <div class="sub-step">
+                                下の黒いボックスをクリックするとコピーできます。<br>
+                                Chromeの上部にあるアドレスバー（URLが表示されているところ）に貼り付けてEnterキーを押してください。
+                            </div>
+                        </li>
+                    </ol>
+                    <div class="code-box" onclick="copyText('chrome://settings/handlers')">chrome://settings/handlers</div>
+                    <ol start="3">
+                        <li>
+                            <strong>「プロトコルの処理を許可しないサイト」を確認</strong>
+                            <div class="sub-step">
+                                画面を下にスクロールして、この項目を探してください
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="check-box">
+                        <div class="check-box-title">🔍 確認ポイント</div>
+                        <p class="check-ng">❌ <strong>mail.google.com がある場合</strong><br>
+                        　→ 右にある「✕」ボタンをクリックして削除してください</p>
+                        <p class="check-ok">✅ <strong>mail.google.com がない場合</strong><br>
+                        　→ そのままでOK！次のステップへ進んでください</p>
+                    </div>
+                    
+                    <button class="help-copy-btn" onclick="copyStepHelp(2)">この手順をコピーしてChatGPTに質問</button>
+                    <div class="step-help-text" id="step2-help">【Eightメール復旧】ステップ2で困っています。
+
+現在やっていること：
+「Chrome の mailto ブロック設定を解除する」
+（ChromeがGmailでメールを開くことをブロックしていないか確認する設定）
+
+手順：
+1. Chromeブラウザを開く
+2. アドレスバーに「chrome://settings/handlers」をコピーして開く
+3. 「プロトコルの処理を許可しないサイト」を確認
+4. mail.google.com があれば「✕」で削除、なければそのままでOK
+
+困っている内容：
+（ここに具体的に何がわからないか、どこでつまずいているかを書いてください）
+例：「プロトコルの処理を許可しないサイト」という項目が見つからない、など</div>
+                </div>
+            </div>
+            
+            <!-- STEP 3 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Gmail に mailto を許可する</div>
+                </div>
+                <div class="step-content">
+                    <div class="important-note">
+                        <span class="icon">⭐</span>
+                        <div><strong>これが一番重要なステップです！</strong></div>
+                    </div>
+                    
+                    <div class="purpose-box">
+                        <strong>何をする？</strong><br>
+                        Gmailに「メールリンクを開く許可」を与えます。これをしないとGmailがメールリンクに反応しません。
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <strong>下のボタンをクリックしてGmailを開く</strong>
+                        </li>
+                    </ol>
+                    <a href="https://mail.google.com/mail/?extsrc=mailto&url=mailto:test@example.com" target="_blank" class="link-btn gmail">
+                        👉 Gmail を開く（許可設定用）
+                    </a>
+                    <ol start="2">
+                        <li>
+                            <strong>画面上部にポップアップが表示されたら「許可する」をクリック</strong>
+                            <div class="sub-step">
+                                「mail.google.com がメールリンクを開くことを許可しますか？」<br>
+                                のようなメッセージが表示されます
+                            </div>
+                        </li>
+                        <li>
+                            <strong>「完了」をクリック</strong>
+                        </li>
+                    </ol>
+                    
+                    <div class="check-box">
+                        <div class="check-box-title">🔍 確認ポイント</div>
+                        <p class="check-ok">✅ ポップアップで「許可する」→「完了」を押せればOK！</p>
+                    </div>
+                    
+                    <div class="check-box" style="background: #fff8e1; border: 1px solid #ffb300;">
+                        <div class="check-box-title">⚠️ ポップアップが自動で出ない場合</div>
+                        <p style="color: #555;">
+                            URLバー（アドレスバー）の<strong>右側</strong>に、<strong>ひし形◇が2個重なったようなアイコン</strong>があります。<br>
+                            それをクリックすると、許可のポップアップが表示されます。
+                        </p>
+                    </div>
+                    
+                    <button class="help-copy-btn" onclick="copyStepHelp(3)">この手順をコピーしてChatGPTに質問</button>
+                    <div class="step-help-text" id="step3-help">【Eightメール復旧】ステップ3で困っています。
+
+現在やっていること：
+「Gmail に mailto を許可する」（一番重要なステップ）
+（Gmailに「メールリンクを開く許可」を与える設定）
+
+手順：
+1. 以下のURLをクリックしてGmailを開く
+   https://mail.google.com/mail/?extsrc=mailto&url=mailto:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2155445255614459404c514d440f424e4c">[email&#160;protected]</a>
+2. 画面上部にポップアップが表示されたら「許可する」をクリック
+3. 「完了」をクリック
+
+困っている内容：
+（ここに具体的に何がわからないか、どこでつまずいているかを書いてください）
+例：ポップアップが出てこない、「許可する」ボタンが見つからない、など</div>
+                </div>
+            </div>
+            
+            <!-- STEP 4 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Eightで最終確認</div>
+                </div>
+                <div class="step-content">
+                    <div class="purpose-box">
+                        <strong>何をする？</strong><br>
+                        実際にEightを開いて、メールボタンが正常に動くか確認します。
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <strong>下のボタンをクリックしてEightを開く</strong>
+                        </li>
+                    </ol>
+                    <a href="https://8card.net/" target="_blank" class="link-btn eight">
+                        📇 Eightを開く
+                    </a>
+                    <ol start="2">
+                        <li>
+                            <strong>名刺一覧から誰かの名刺を開く</strong>
+                            <div class="sub-step">
+                                メールアドレスが登録されている名刺を選んでください
+                            </div>
+                        </li>
+                        <li>
+                            <strong>メールアイコン（✉️）をクリック</strong>
+                            <div class="sub-step">
+                                名刺の詳細画面にあるメールアイコンをクリック
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="check-box">
+                        <div class="check-box-title">🔍 確認ポイント</div>
+                        <p class="check-ok">✅ <strong>Gmailの新規作成画面が開く</strong><br>
+                        　→ 成功です！🎉 ステップ5へ進んでください</p>
+                        <p class="check-ng">❌ <strong>反応しない・Gmailが開かない</strong><br>
+                        　→ ステップ1〜3をもう一度確認してください</p>
+                    </div>
+                    
+                    <button class="help-copy-btn" onclick="copyStepHelp(4)">この手順をコピーしてChatGPTに質問</button>
+                    <div class="step-help-text" id="step4-help">【Eightメール復旧】ステップ4で困っています。
+
+現在やっていること：
+「Eightで最終確認」
+（実際にEightでメールボタンが動くか確認）
+
+手順：
+1. Eightを開く（https://8card.net/）
+2. 名刺一覧から誰かの名刺を開く
+3. メールアイコン（✉️）をクリック
+4. Gmailの新規作成画面が開けばOK
+
+これまでの状況：
+- ステップ1〜3は完了済み
+
+困っている内容：
+（ここに具体的に何がわからないか、どこでつまずいているかを書いてください）
+例：Eightのメールアイコンをクリックしても反応がない、Gmailではなく別のアプリが開く、など</div>
+                </div>
+            </div>
+            
+            <!-- STEP 5 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">完了報告メールを送信する</div>
+                </div>
+                <div class="step-content">
+                    <div class="purpose-box">
+                        <strong>何をする？</strong><br>
+                        設定が完了したことを髙木に報告します。下のボタンを押すと、報告メールが自動で作成されます。
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <strong>下のボタンをクリック</strong>
+                            <div class="sub-step">
+                                Gmailの新規作成画面が開き、宛先・件名・本文が自動で入力されます
+                            </div>
+                        </li>
+                    </ol>
+                    <a href="/cdn-cgi/l/email-protection#83e2f7f0f6ebeaf1ecc3f7e2e8e2e4eaade1f9bcf0f6e1e9e6e0f7bea6c5b3a6bac5a6bbc6a6bbbaa6b1b3a6c6b0a6bbb2a6bbc2a6c6b0a6bbb1a6bbb2a6c6b0a6bbb2a6c2b4a6c6b0a6bbb2a6c2bba6c6b0a6bbb2a6bbb5a6c6b0a6bbb2a6bab7a6c6b0a6bbb2a6bab5a6c6b0a6bbb2a6bbb7a6c6b0a6bbb2a6c1c6a6c6b0a6bbb2a6babaa6c6c5a6c1c0a6bbb2a6c6b0a6bbb0a6c2b2a6c6b0a6bbb0a6c1c0a6c6b0a6bbb0a6c2c1a6c6bba6c2bba6c2c7a6c6b6a6c2c6a6bac2a6c6b6a6c2c6a6bbc0a6c6b7a6c1c2a6bbb5a5e1ece7fabea6c6b0a6bbb2a6bbc2a6c6b0a6bbb1a6bbb2a6c6b0a6bbb2a6c2b4a6c6b0a6bbb2a6c2bba6c6b0a6bbb2a6bbb5a6c6b0a6bbb2a6bab7a6c6b0a6bbb2a6bab5a6c6b0a6bbb2a6bbb7a6c6b0a6bbb2a6c1c6a6c6b0a6bbb2a6babaa6c6c5a6c1c0a6bbb2a6b3c2c6eae4ebf7a6c6b0a6bbb2a6c2c6a6c6b0a6bbb0a6c2b2a6c6b0a6bbb0a6c1c0a6c6b0a6bbb0a6c2c1a6c6bba6c2bba6c2c7a6c6b6a6c2c6a6bac2a6c6b0a6bbb2a6bbc0a6c6b6a6c2c6a6bbc0a6c6b7a6c1c2a6bbb5a6c6b0a6bbb2a6bab4a6c6b0a6bbb2a6c1c6a6c6b0a6bbb2a6bab4a6c6b0a6bbb2a6bac5a6c6b0a6bbb3a6bbb1a6b3c2a6c6b0a6bbb2a6bab0a6c6b0a6bbb2a6c2c6a6c6b0a6bbb0a6c2b2a6c6b0a6bbb0a6c1c0a6c6b0a6bbb0a6c2c1a6c6b0a6bbb1a6bab1a6c6b0a6bbb2a6bab0a6c6b0a6bbb2a6c2c6a6c6b0a6bbb2a6c1c6a6c6b0a6bbb2a6c1c6a6c6baa6c2c1a6babaa6c6b5a6bac0a6c2bba6c6b0a6bbb2a6c2c1a6c6baa6bbb3a6bbb2a6c6b0a6bbb1a6bbc0a6c6b0a6bbb2a6c1b3a6c6b6a6c2c6a6bbc0a6c6b7a6c1c2a6bbb5a6c6b0a6bbb2a6c2b4a6c6b0a6bbb2a6babaa6c6b0a6bbb3a6bbb1a6b3c2a6c6b0a6bbb2a6bbc2a6c6b4a6bab5a6c1b1a6c6b0a6bbb1a6bbc0a6c6b5a6c2b4a6babba6c6b0a6bbb2a6c2b4a6c6b0a6bbb2a6bab4a6c6b0a6bbb2a6bac5a6c6b0a6bbb3a6bbb1" class="link-btn complete">
+                        🎉 完了報告メールを送信する
+                    </a>
+                    <ol start="2">
+                        <li>
+                            <strong>そのまま「送信」ボタンをクリック</strong>
+                            <div class="sub-step">
+                                内容を確認して、Gmailの送信ボタン（青いボタン）を押してください
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="check-box">
+                        <div class="check-box-title">🔍 確認ポイント</div>
+                        <p class="check-ok">✅ メールを送信できれば、すべて完了です！お疲れ様でした！</p>
+                    </div>
+                    
+                    <button class="help-copy-btn" onclick="copyStepHelp(5)">この手順をコピーしてChatGPTに質問</button>
+                    <div class="step-help-text" id="step5-help">【Eightメール復旧】ステップ5で困っています。
+
+現在やっていること：
+「完了報告メールを送信する」
+（設定完了を髙木に報告する）
+
+手順：
+1. 「完了報告メールを送信する」ボタンをクリック
+2. Gmailの新規作成画面が開く（宛先・件名・本文は自動入力）
+3. そのまま送信ボタンを押す
+
+期待される動作：
+- Gmailの新規作成画面が開く
+- 宛先に <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3a2b7b0b6abaab1ac83b7a2a8a2a4aaeda1b9">[email&#160;protected]</a> が入っている
+- 件名に「🎉 おめでとうございます！メール設定完了」が入っている
+
+困っている内容：
+（ここに具体的に何がわからないか、どこでつまずいているかを書いてください）
+例：Gmailが開かない、別のメールアプリが開いてしまう、など</div>
+                </div>
+            </div>
+            
+            <div class="success-box">
+                <h3>👍 これで100%直ります</h3>
+                <p>どのスタッフでも再現できるよう、丁寧に説明しています。</p>
+            </div>
+        </div>
+        
+        <!-- ChatGPTヘルプセクション -->
+        <div class="help-section">
+            <h3>🤖 わからないことがあったら...</h3>
+            <p>各ステップの「この手順をコピーしてChatGPTに質問」ボタンを押すと、<br>
+            現在の状況がコピーされます。ChatGPTに貼り付けて質問してください！</p>
+            <a href="https://chatgpt.com/" target="_blank" class="chatgpt-btn">
+                💬 ChatGPTを開く
+            </a>
+        </div>
+        
+        <footer>
+            <p>📌 このマニュアルで解決しない場合は、システム担当者にご連絡ください。</p>
+        </footer>
+    </div>
+    
+    <div class="copy-toast" id="copyToast">✅ コピーしました！ChatGPTに貼り付けてください</div>
+    
+    <a href="https://chatgpt.com/" target="_blank" class="chatgpt-float">
+        🤖 ChatGPTに質問
+    </a>
+    
+    <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ コピーしました！');
+            });
+        }
+        
+        function copyStepHelp(stepNum) {
+            const helpText = document.getElementById('step' + stepNum + '-help').textContent;
+            navigator.clipboard.writeText(helpText).then(() => {
+                showToast('✅ コピーしました！ChatGPTに貼り付けてください');
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('copyToast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html><
