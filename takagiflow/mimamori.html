@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出発見守り和子さん 運用フロー図解</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #f0f4f8;
+            color: #334155;
+        }
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+        }
+        .section-card:hover {
+            transform: translateY(-2px);
+        }
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 16px solid #94a3b8;
+            margin: 0.5rem auto;
+        }
+
+        /* 印刷・PDF化のための特別設定 */
+        @media print {
+            .no-print { display: none !important; }
+            
+            body { 
+                background: white; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+                width: 100%;
+                /* 文字サイズ調整（少し小さくしてA4に収まりやすくする） */
+                font-size: 12px;
+            }
+
+            /* カードの影を消して枠線をつける（印刷用） */
+            .section-card { 
+                break-inside: avoid; 
+                page-break-inside: avoid;
+                box-shadow: none; 
+                border: 1px solid #cbd5e1; 
+                margin-bottom: 1rem;
+            }
+
+            /* ページの余白設定 */
+            @page {
+                margin: 10mm;
+                size: A4 portrait; /* A4縦 */
+            }
+
+            /* 見出しなどの調整 */
+            h1 { font-size: 24px !important; }
+            h2 { font-size: 18px !important; margin-bottom: 1rem !important; }
+            
+            /* グリッド調整 */
+            .grid { display: block !important; }
+            .md\:grid-cols-2 > div { width: 100% !important; margin-bottom: 20px; }
+            .md\:grid-cols-3 { display: flex !important; gap: 10px; }
+            .md\:grid-cols-3 > div { flex: 1; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <!-- Header Section -->
+    <header class="text-center mb-10 bg-white p-8 rounded-2xl shadow-sm border-t-8 border-blue-500">
+        <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold mb-2">管制向け仕様確認資料</div>
+        <h1 class="text-3xl md:text-5xl font-black text-slate-800 mb-4">
+            <i class="fa-solid fa-robot text-blue-500 mr-2"></i>出発見守り和子さん
+        </h1>
+        <p class="text-xl font-bold text-slate-600">
+            目的：<span class="text-blue-600 bg-blue-50 px-2 rounded">電話を減らし、問題がある人だけを対応する</span>
+        </p>
+
+        <!-- Download Button -->
+        <div class="mt-6 no-print">
+            <button onclick="window.print()" class="group bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg flex items-center mx-auto space-x-2 cursor-pointer">
+                <i class="fa-solid fa-file-pdf text-xl group-hover:scale-110 transition-transform"></i>
+                <span>PDF保存 / 印刷する</span>
+            </button>
+            <p class="text-xs text-slate-500 mt-2">
+                ※印刷画面で「送信先」を「PDFに保存」に変更してください。<br>
+                ※色が薄い場合は「背景のグラフィック」にチェックを入れてください。
+            </p>
+        </div>
+    </header>
+
+    <!-- Core Concept -->
+    <section class="mb-10 text-center section-card p-6 border-none shadow-none bg-transparent">
+        <h2 class="text-2xl font-bold text-slate-700 mb-6 flex items-center justify-center">
+            <span class="border-b-4 border-yellow-400 pb-1">全体の考え方</span>
+        </h2>
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-red-800">
+                <i class="fa-solid fa-ban text-2xl mb-2"></i>
+                <div class="font-bold">全員への電話をやめる</div>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-yellow-800">
+                <i class="fa-solid fa-filter text-2xl mb-2"></i>
+                <div class="font-bold">未出発の人だけ拾う</div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-xl border border-green-100 text-green-800">
+                <i class="fa-solid fa-robot text-2xl mb-2"></i>
+                <div class="font-bold">他は自動完結</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- Left Column: The Day Before -->
+        <div class="space-y-6">
+            <div class="bg-indigo-600 text-white p-3 rounded-t-xl text-center font-bold text-lg section-card !rounded-b-none !mb-0 !shadow-none !border-none">
+                <i class="fa-solid fa-moon mr-2"></i>【前日】準備フェーズ
+            </div>
+            
+            <div class="section-card p-6 !rounded-t-none border-t-0 border-l-4 border-l-indigo-500 space-y-6">
+                <!-- Step 1 -->
+                <div class="flex gap-4">
+                    <div class="step-number bg-indigo-500">1</div>
+                    <div>
+                        <h3 class="font-bold text-lg">出発予定時間の登録</h3>
+                        <p class="text-slate-500 text-sm">キャストがLINEでボタンを押すだけ</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="flex gap-4">
+                    <div class="step-number bg-indigo-400">2</div>
+                    <div>
+                        <h3 class="font-bold text-lg">未登録リマインド</h3>
+                        <div class="text-indigo-600 font-mono font-bold bg-indigo-50 inline-block px-2 rounded mt-1">
+                            20:00 / 21:00 / 22:00 / 23:00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="flex gap-4">
+                    <div class="step-number bg-indigo-300">3</div>
+                    <div class="w-full">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-lg">管制へ通知</h3>
+                            <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">Alert</span>
+                        </div>
+                        <p class="text-sm mt-1">
+                            <span class="font-bold">22:30時点</span><br>
+                            未登録者がいれば井上さん・近藤さんへLINE
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex gap-4">
+                    <div class="step-number bg-slate-400">4</div>
+                    <div>
+                        <h3 class="font-bold text-lg">最終自動処理 (24:00)</h3>
+                        <p class="text-slate-500 text-sm">
+                            マスタ時間を自動採用。<br>
+                            それでもデータが無い場合は管制へ通知。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: The Day Of -->
+        <div class="space-y-6">
+            <div class="bg-orange-500 text-white p-3 rounded-t-xl text-center font-bold text-lg section-card !rounded-b-none !mb-0 !shadow-none !border-none">
+                <i class="fa-solid fa-sun mr-2"></i>【当日】稼働フェーズ
+            </div>
+
+            <div class="section-card p-6 !rounded-t-none border-t-0 border-l-4 border-l-orange-500">
+                
+                <!-- Cast Action -->
+                <div class="bg-blue-50 border-2 border-blue-200 p-4 rounded-xl text-center mb-4">
+                    <div class="font-bold text-blue-900">キャストが出発</div>
+                    <div class="text-sm text-blue-600">LINEで「出発報告」ボタンを押す</div>
+                </div>
+
+                <div class="arrow-down"></div>
+
+                <!-- Logic Box -->
+                <div class="bg-slate-800 text-white p-3 rounded-lg text-center mx-auto w-4/5 shadow-lg my-4 relative z-10">
+                    <div class="text-xs text-slate-300 uppercase tracking-wider mb-1">Check</div>
+                    <div class="font-bold">予定時間までに報告はある？</div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <!-- YES Route -->
+                    <div class="bg-green-100 border border-green-200 p-4 rounded-xl text-center flex flex-col justify-center items-center h-32">
+                        <div class="text-green-600 font-bold text-xl mb-1">YES</div>
+                        <i class="fa-solid fa-check-circle text-green-500 text-3xl mb-1"></i>
+                        <div class="font-bold text-green-800 text-sm">何もしない</div>
+                    </div>
+
+                    <!-- NO Route -->
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-xl text-center flex flex-col justify-center items-center h-32 relative overflow-hidden">
+                        <div class="text-red-600 font-bold text-xl mb-1">NO</div>
+                        <i class="fa-solid fa-phone-volume text-red-500 text-3xl mb-1 animate-pulse"></i>
+                        <div class="font-bold text-red-800 text-sm">自動電話</div>
+                    </div>
+                </div>
+
+                <!-- Auto Call Spec -->
+                <div class="mt-4 bg-slate-100 p-4 rounded-lg border border-slate-200 text-sm">
+                    <div class="font-bold text-slate-700 mb-2 border-b border-slate-300 pb-1">
+                        <i class="fa-solid fa-robot mr-1"></i>自動電話の仕様
+                    </div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span>1回目</span>
+                        <span class="font-mono bg-white px-2 py-0.5 rounded border">5分おき × 5回</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>2回目</span>
+                        <span class="font-mono bg-white px-2 py-0.5 rounded border">3分おき × 10回</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Human Action Section -->
+    <section class="mt-10 section-card !p-0 overflow-hidden">
+        <div class="bg-red-600 text-white p-2 text-center font-bold tracking-widest text-sm">
+            HUMAN INTERVENTION REQUIRED
+        </div>
+        <div class="p-6 flex flex-col md:flex-row gap-6 items-center">
+            
+            <div class="flex-1">
+                <h3 class="text-xl font-bold text-red-700 flex items-center mb-3">
+                    <i class="fa-solid fa-headset text-2xl mr-3"></i>
+                    管制が対応するのは<br class="md:hidden">「この時だけ」
+                </h3>
+                <div class="space-y-2 bg-red-50 p-4 rounded-lg text-red-900 text-sm font-medium">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-square-xmark text-red-500 mr-2 text-lg"></i>
+                        出発予定時間を過ぎている
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-square-xmark text-red-500 mr-2 text-lg"></i>
+                        自動電話が全て終わっても反応がない
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:w-1/3 w-full bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm">
+                <div class="font-bold text-slate-700 mb-2 border-b pb-1">管制のアクション</div>
+                <ul class="space-y-2">
+                    <li class="flex items-start">
+                        <span class="bg-slate-200 text-slate-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
+                        人の手で電話する
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-slate-200 text-slate-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
+                        状況確認（遅刻・体調など）
+                    </li>
+                    <li class="flex items-start">
+                        <span class="bg-slate-200 text-slate-600 rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
+                        穴埋め手配・現場調整
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checklist -->
+    <section class="mt-8 section-card p-6 no-print">
+        <h3 class="font-bold text-lg text-slate-700 mb-4 border-l-4 border-green-500 pl-3">
+            確認したいポイント（Yes / No）
+        </h3>
+        <ul class="space-y-3">
+            <li class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer transition">
+                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-3">
+                <span class="text-slate-700">この流れで、管制の電話対応は減りそうか？</span>
+            </li>
+            <li class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer transition">
+                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-3">
+                <span class="text-slate-700">22:30の未登録者通知のタイミングは問題ないか？</span>
+            </li>
+            <li class="flex items-center p-2 hover:bg-slate-50 rounded cursor-pointer transition">
+                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-3">
+                <span class="text-slate-700">当日、「出発報告が無い人だけ対応する」運用は現実的か？</span>
+            </li>
+        </ul>
+    </section>
+
+    <footer class="text-center text-slate-400 mt-12 text-sm pb-8">
+        出発見守り和子さん 仕様確認用資料
+    </footer>
+
+</body>
+</html>
