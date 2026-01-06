@@ -1,1 +1,295 @@
-index
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>開発アプリ一覧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 50px 20px;
+            color: #2d3748;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            color: #1a202c;
+        }
+
+        .subtitle {
+            font-size: 1.05em;
+            color: #718096;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 28px;
+            margin-bottom: 60px;
+        }
+
+        .app-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #cbd5e0;
+            transition: background 0.25s ease;
+        }
+
+        .app-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.15);
+            background: #ffffff;
+        }
+
+        .app-card:hover::before {
+            background: #667eea;
+        }
+
+        .app-name {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 16px;
+            word-break: break-word;
+            line-height: 1.5;
+            letter-spacing: 0.3px;
+        }
+
+        .app-description {
+            color: #4a5568;
+            line-height: 1.9;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .app-features {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9em;
+            color: #718096;
+            line-height: 1.7;
+        }
+
+        .app-features strong {
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .app-path {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.85em;
+            color: #a0aec0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            word-break: break-all;
+            letter-spacing: 0.3px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            border-top: 2px solid #e2e8f0;
+            color: #a0aec0;
+            font-size: 0.95em;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 2.4em;
+            }
+
+            body {
+                padding: 30px 15px;
+            }
+
+            .app-card {
+                padding: 24px;
+            }
+
+            .app-name {
+                font-size: 1.3em;
+            }
+
+            .app-description {
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>開発アプリ一覧</h1>
+            <p class="subtitle">Development Applications Portfolio</p>
+        </header>
+
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-name">名簿作成ツール (management)</div>
+                <div class="app-description">警備員名簿の作成とプロキャスデータ更新を自動化するツール集。Excelテンプレートを使用して名簿を自動生成し、写真の自動貼り付け、データ更新、ログ管理機能を提供。バッチ処理対応で複数名簿の一括作成が可能。</div>
+                <div class="app-features"><strong>主な機能:</strong> Excel名簿生成、写真貼り付け、プロキャスデータ更新、バッチ処理</div>
+                <div class="app-path">management/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">おはよう和子さん (kazuko_departure_watch)</div>
+                <div class="app-description">キャストの出発予定時間と起床予定時間を管理するLINE Bot連携システム。18時から22時の間に未登録者へリマインド通知を送信し、予定時間を過ぎても報告がない場合はTwilioで電話発信。Procastデータと連携して翌日出勤者のみに通知し、未登録者や緊急アラートを管制に通知する機能を備える。</div>
+                <div class="app-features"><strong>主な機能:</strong> 出発・起床時間管理、LINE Bot連携、リマインド通知、電話発信、管制通知</div>
+                <div class="app-path">kazuko_departure_watch/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">Slack RAGシステム (slack_channel)</div>
+                <div class="app-description">Slackチャンネルのメッセージデータをベクトルデータベースに保存し、セマンティック検索と質問応答を実現するRAG（Retrieval-Augmented Generation）システム。チャンネルメッセージをエンベディング化してベクトルDBに格納し、自然言語クエリで過去の会話を検索・参照できる。Webインターフェースを提供。</div>
+                <div class="app-features"><strong>主な機能:</strong> ベクトルDB、セマンティック検索、質問応答、Web UI</div>
+                <div class="app-path">slack_channel/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">簡単な掲示板アプリ (simple-bulletin-board)</div>
+                <div class="app-description">Next.js 16のApp Router、TypeScript、Tailwind CSS、SQLiteを使用したシンプルな掲示板アプリケーション。投稿の作成、時系列順の一覧表示、削除機能を提供。better-sqlite3を使用した軽量なデータベース構成で、開発環境と本番環境の両方に対応。</div>
+                <div class="app-features"><strong>技術スタック:</strong> Next.js 16, TypeScript, Tailwind CSS, SQLite</div>
+                <div class="app-path">simple-bulletin-board/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">Slack Workflow Analysis (slack_workflow_analysis)</div>
+                <div class="app-description">Slackワークフローのデータを分析するツール。大量のJSON形式のワークフローデータから情報を抽出し、ワークフローの構造、使用状況、パターンを分析。データの可視化とレポート生成機能を備える。</div>
+                <div class="app-features"><strong>主な機能:</strong> ワークフロー抽出、データ分析、レポート生成</div>
+                <div class="app-path">slack_workflow_analysis/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">名簿管理くん (manager)</div>
+                <div class="app-description">Google Sheetsをマスターデータとして、警備員名簿のExcelファイルを自動生成するFastAPIベースのシステム。Google Sheets APIから社員データを取得し、テンプレートExcelにデータを書き込み、写真を自動的に貼り付け。データ検証、一括名簿生成、統計情報取得、エクスポート機能（CSV/JSON）を提供。APIキー認証とレート制限に対応。</div>
+                <div class="app-features"><strong>技術スタック:</strong> FastAPI, Python, Google Sheets API, openpyxl, Pillow</div>
+                <div class="app-path">manager/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">警備員名簿用DB更新プログラム (guardroster_db)</div>
+                <div class="app-description">複数のExcelファイルからデータを読み取り、名前をキーとして警備員名簿用DB.xlsxのデータを更新するPythonプログラム。列マッピング設定による異なる構造のファイル対応、ドライラン機能、バックアップ自動作成、詳細なログ出力を備える。構造確認機能でファイルの整合性を事前にチェック可能。</div>
+                <div class="app-features"><strong>主な機能:</strong> Excelデータ更新、列マッピング、ドライラン、バックアップ、ログ記録</div>
+                <div class="app-path">guardroster_db/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">Slack Channel Data Exporter</div>
+                <div class="app-description">Slackチャンネルのメッセージ履歴と添付ファイルをエクスポートするCLIツール。メッセージをJSONL形式で保存し、ChatGPTなどのLLMで読みやすいMarkdown形式にも変換可能。複数チャンネルの同時エクスポート、期間指定、スレッド返信の取得に対応。Slack APIのレート制限を考慮した安全な処理を実装。</div>
+                <div class="app-features"><strong>主な機能:</strong> メッセージエクスポート、ファイルダウンロード、JSONL/Markdown変換、期間指定</div>
+                <div class="app-path">slack-channel-data-exporter/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">テトリス (codex_test)</div>
+                <div class="app-description">HTML5 CanvasとJavaScriptで実装されたブラウザベースのテトリスゲーム。スコア、レベル、消去行数の管理、次のピースのプレビュー表示機能を備える。キーボード操作（矢印キー、スペースキー）でプレイ可能なシンプルなゲームアプリ。</div>
+                <div class="app-features"><strong>技術スタック:</strong> HTML5, CSS, JavaScript, Canvas API</div>
+                <div class="app-path">codex_test/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">NewTOS v5 (v5)</div>
+                <div class="app-description">NewTOSシリーズのバージョン5。思考サイクル実行、ログ検証、デバッグトレース、監査証明機能を備えた制御システム。検証機能を強化し、実行履歴の追跡と監査ログの生成が可能。エラー発生時の詳細なトレース情報を記録。</div>
+                <div class="app-features"><strong>主な機能:</strong> 思考サイクル制御、ログ検証、デバッグトレース、監査証明</div>
+                <div class="app-path">v5/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">仕様書指示書バリデータ</div>
+                <div class="app-description">仕様書やClaudeCode向け指示書の品質を保証するバリデーションアプリケーション。矛盾・不整合の検出、用語の統一性チェック、自己完結性の評価、危険操作パターンの検出を行う。最小限の修正提案と監査耐性スコアの算出、改善提案の生成を提供。Spec TrackとInstruction Trackの2トラック制で多角的に品質を評価。</div>
+                <div class="app-features"><strong>主な機能:</strong> 矛盾検出、用語統一チェック、危険操作検出、監査耐性スコア、改善提案</div>
+                <div class="app-path">仕様書指示書バリデータ/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">NewTOS v4 (v4)</div>
+                <div class="app-description">NewTOSシリーズのバージョン4。思考サイクル実行とログ検証機能を備えた制御システム。セッション管理とロック機能により、並行実行を防止し、安全な実行環境を提供。</div>
+                <div class="app-features"><strong>主な機能:</strong> 思考サイクル実行、ログ検証、セッション管理</div>
+                <div class="app-path">v4/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">NewTOS制御アプリV3 (newtos_v3_controller)</div>
+                <div class="app-description">人間指示を起点に、ChatGPT → Claude → ChatGPT → ClaudeCode実行からなる思考サイクルを最大10回まで実行する制御アプリケーション。1人間指示＝1実行セッションとして、10回目の思考サイクルで必ず安全停止する設計。AI間のデータ受け渡しを管理し、実行履歴を記録。</div>
+                <div class="app-features"><strong>主な機能:</strong> 思考サイクル制御、最大10回実行、安全停止、実行履歴管理</div>
+                <div class="app-path">newtos_v3_controller/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">NewTOS v1.3 (newtos)</div>
+                <div class="app-description">Takagi Flow準拠のジョブ制御システム。STOP/RESUME/TERMINATEによる人間判断を介したジョブ制御を実現。Slack通知・入力連携、Claude API統合、Run1/Run2/Run3の3段階進行制御を備える。AI間データ受け渡し機能、エラー分類、本番運用チェックリスト機能を提供。安全ゲート機構により、意図しない自動実行を防止。</div>
+                <div class="app-features"><strong>主な機能:</strong> ジョブ制御、Slack連携、Claude API統合、3段階Run制御、エラー分類</div>
+                <div class="app-path">newtos/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">Indeed応募通知システム (recruit)</div>
+                <div class="app-description">Indeedおよびジモティーからの求人応募メールを自動取得し、SlackとLINEに通知する自動化システム。GmailのIMAP経由で未読メールをチェックし、応募メールを自動判別。応募者名と応募内容確認URLを抽出して通知。Railway上で常時稼働し、test/prodモードによる環境切り替え機能を備える。</div>
+                <div class="app-features"><strong>主な機能:</strong> メール監視、自動判別、Slack/LINE通知、常時稼働</div>
+                <div class="app-path">recruit/</div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-name">AIパイプライン (ai_pipeline)</div>
+                <div class="app-description">Takagi Flow準拠のオーケストレーターシステム。複数のステップを自動実行し、ログを管理するパイプライン制御ツール。各ステップのPythonスクリプトを順次実行し、実行結果を記録。エラーハンドリングとログファイル管理機能を提供。</div>
+                <div class="app-features"><strong>主な機能:</strong> パイプライン実行、ステップ管理、ログ記録、エラーハンドリング</div>
+                <div class="app-path">ai_pipeline/</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>最終更新: 2025年1月 | 更新日時順に表示</p>
+        </footer>
+    </div>
+</body>
+</html>
